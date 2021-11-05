@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.5 (921394 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <bounds minlat="19.4313500" minlon="-99.1390300" maxlat="19.4319200" maxlon="-99.1380300"/>
+ <node id="30341012" visible="true" version="8" changeset="100938565" timestamp="2021-03-13T00:52:32Z" user="sasQuach" uid="9917894" lat="19.4320048" lon="-99.1412023"/>
+ <node id="30594809" visible="true" version="4" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4317964" lon="-99.1397023"/>
+ <node id="30594812" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4313606" lon="-99.1365640"/>
+ <node id="30956904" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4312161" lon="-99.1355236"/>
+ <node id="268615862" visible="true" version="5" changeset="100938565" timestamp="2021-03-13T00:52:32Z" user="sasQuach" uid="9917894" lat="19.4324842" lon="-99.1384633"/>
+ <node id="268633522" visible="true" version="7" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4309473" lon="-99.1335877">
+  <tag k="highway" v="traffic_signals"/>
+  <tag k="traffic_signals" v="signal"/>
+ </node>
+ <node id="268639104" visible="true" version="7" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4310729" lon="-99.1344924">
+  <tag k="highway" v="traffic_signals"/>
+  <tag k="traffic_signals" v="signal"/>
+ </node>
+ <node id="269956911" visible="true" version="6" changeset="100938565" timestamp="2021-03-13T00:52:32Z" user="sasQuach" uid="9917894" lat="19.4308180" lon="-99.1387116"/>
+ <node id="269957015" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4299554" lon="-99.1388810"/>
+ <node id="269987047" visible="true" version="7" changeset="61827153" timestamp="2018-08-20T15:24:38Z" user="chachafish" uid="2237750" lat="19.4357154" lon="-99.1380011">
+  <tag k="highway" v="traffic_signals"/>
+  <tag k="traffic_signals" v="signal"/>
+ </node>
+ <node id="269994167" visible="true" version="4" changeset="61826140" timestamp="2018-08-20T14:49:37Z" user="chachafish" uid="2237750" lat="19.4302066" lon="-99.1282534"/>
+ <node id="269994176" visible="true" version="6" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4307745" lon="-99.1323430"/>
+ <node id="269994178" visible="true" version="9" changeset="101368718" timestamp="2021-03-20T01:20:14Z" user="sasQuach" uid="9917894" lat="19.4304964" lon="-99.1302983"/>
+ <node id="269997729" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:32Z" user="chachafish" uid="2237750" lat="19.4303381" lon="-99.1292007"/>
+ <node id="270209444" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4306171" lon="-99.1312099"/>
+ <node id="270209445" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4306570" lon="-99.1314969"/>
+ <node id="270209447" visible="true" version="5" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4305719" lon="-99.1308844"/>
+ <node id="1983085867" visible="true" version="3" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4307991" lon="-99.1325207"/>
+ <node id="2267025299" visible="true" version="2" changeset="37699651" timestamp="2016-03-09T02:45:59Z" user="CENTSOARER" uid="232801" lat="19.4311670" lon="-99.1381540"/>
+ <node id="2267025304" visible="true" version="2" changeset="37699651" timestamp="2016-03-09T02:45:59Z" user="CENTSOARER" uid="232801" lat="19.4315139" lon="-99.1379791"/>
+ <node id="2267025310" visible="true" version="2" changeset="37699651" timestamp="2016-03-09T02:45:59Z" user="CENTSOARER" uid="232801" lat="19.4311510" lon="-99.1380333"/>
+ <node id="2267025316" visible="true" version="2" changeset="37699651" timestamp="2016-03-09T02:45:59Z" user="CENTSOARER" uid="232801" lat="19.4311556" lon="-99.1380679"/>
+ <node id="2267025317" visible="true" version="2" changeset="37699651" timestamp="2016-03-09T02:45:59Z" user="CENTSOARER" uid="232801" lat="19.4315300" lon="-99.1380998"/>
+ <node id="2418219450" visible="true" version="1" changeset="17336499" timestamp="2013-08-13T20:14:28Z" user="CENTSOARER" uid="232801" lat="19.4317308" lon="-99.1385359">
+  <tag k="historic" v="monument"/>
+  <tag k="name" v="Reloj Otomano"/>
+ </node>
+ <node id="2434317331" visible="true" version="4" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4309377" lon="-99.1335186">
+  <tag k="highway" v="traffic_signals"/>
+  <tag k="traffic_signals" v="signal"/>
+ </node>
+ <node id="2434317335" visible="true" version="3" changeset="61805220" timestamp="2018-08-19T22:03:31Z" user="chachafish" uid="2237750" lat="19.4307807" lon="-99.1323878"/>
+ <node id="3383901542" visible="true" version="4" changeset="61805220" timestamp="2018-08-19T22:03:32Z" user="chachafish" uid="2237750" lat="19.4304187" lon="-99.1297808"/>
+ <node id="3714135693" visible="true" version="7" changeset="104918762" timestamp="2021-05-18T23:51:15Z" user="Terrajoven" uid="11399638" lat="19.4337585" lon="-99.1382990"/>
+ <node id="3772750754" visible="true" version="6" changeset="100938565" timestamp="2021-03-13T00:52:32Z" user="sasQuach" uid="9917894" lat="19.4316592" lon="-99.1385719"/>
+ <node id="3772750969" visible="true" version="7" changeset="61827153" timestamp="2018-08-20T15:24:38Z" user="chachafish" uid="2237750" lat="19.4344845" lon="-99.1381891">
+  <tag k="highway" v="traffic_signals"/>
+  <tag k="traffic_signals" v="signal"/>
+ </node>
+ <node id="4058631209" visible="true" version="3" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4320820" lon="-99.1386382"/>
+ <node id="4058637090" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4315381" lon="-99.1383385"/>
+ <node id="4058637091" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4315112" lon="-99.1381558"/>
+ <node id="4058637092" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4311647" lon="-99.1382131"/>
+ <node id="4058637093" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4311915" lon="-99.1383958"/>
+ <node id="5116435427" visible="true" version="2" changeset="61798453" timestamp="2018-08-19T16:46:19Z" user="chachafish" uid="2237750" lat="19.4320282" lon="-99.1384025"/>
+ <node id="5116435428" visible="true" version="2" changeset="61798453" timestamp="2018-08-19T16:46:19Z" user="chachafish" uid="2237750" lat="19.4319078" lon="-99.1375124"/>
+ <node id="5116435429" visible="true" version="2" changeset="61798453" timestamp="2018-08-19T16:46:19Z" user="chachafish" uid="2237750" lat="19.4315678" lon="-99.1375642"/>
+ <node id="5116435430" visible="true" version="2" changeset="61798453" timestamp="2018-08-19T16:46:19Z" user="chachafish" uid="2237750" lat="19.4316883" lon="-99.1384543"/>
+ <node id="5116451922" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4316494" lon="-99.1389998"/>
+ <node id="5116451923" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4316839" lon="-99.1392690"/>
+ <node id="5116451924" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4313404" lon="-99.1393187"/>
+ <node id="5116451925" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4313058" lon="-99.1390495"/>
+ <node id="5116451930" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4316076" lon="-99.1387120"/>
+ <node id="5116451931" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4316409" lon="-99.1389558"/>
+ <node id="5116451932" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4312872" lon="-99.1390102"/>
+ <node id="5116451933" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:26Z" user="Daniel Specht" uid="2393795" lat="19.4312538" lon="-99.1387665"/>
+ <node id="5116451944" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4312161" lon="-99.1384079"/>
+ <node id="5116451945" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4315590" lon="-99.1383551"/>
+ <node id="5116451946" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4315843" lon="-99.1385393"/>
+ <node id="5116451947" visible="true" version="2" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4312413" lon="-99.1385921"/>
+ <node id="5842139801" visible="true" version="4" changeset="101068773" timestamp="2021-03-15T18:14:43Z" user="sasQuach" uid="9917894" lat="19.4314402" lon="-99.1382692">
+  <tag k="addr:city" v="Ciudad de México"/>
+  <tag k="addr:housenumber" v="39"/>
+  <tag k="addr:postcode" v="06000"/>
+  <tag k="addr:street" v="Venustiano Carranza"/>
+  <tag k="amenity" v="bank"/>
+  <tag k="atm" v="yes"/>
+  <tag k="brand" v="Banorte"/>
+  <tag k="brand:wikidata" v="Q806914"/>
+  <tag k="brand:wikipedia" v="en:Banorte"/>
+  <tag k="name" v="Banorte"/>
+  <tag k="opening_hours" v="Mo-Fr 08:30-16:00"/>
+  <tag k="operator" v="Grupo Financiero Banorte"/>
+ </node>
+ <node id="5842139810" visible="true" version="3" changeset="71717818" timestamp="2019-06-28T18:26:12Z" user="Sergio Fragoso" uid="7425931" lat="19.4318059" lon="-99.1382988">
+  <tag k="amenity" v="bank"/>
+  <tag k="atm" v="yes"/>
+  <tag k="brand" v="BBVA"/>
+  <tag k="brand:wikidata" v="Q806189"/>
+  <tag k="brand:wikipedia" v="en:Banco Bilbao Vizcaya Argentaria"/>
+  <tag k="name" v="BBVA"/>
+  <tag k="official_name" v="Banco Bilbao Vizcaya Argentaria"/>
+ </node>
+ <node id="5868903526" visible="true" version="2" changeset="110525566" timestamp="2021-08-31T17:29:25Z" user="CENTSOARER" uid="232801" lat="19.4308223" lon="-99.1326666"/>
+ <node id="6332252045" visible="true" version="1" changeset="68045743" timestamp="2019-03-12T03:04:31Z" user="EVolta" uid="9148008" lat="19.4315779" lon="-99.1387731">
+  <tag k="name" v="Martí"/>
+  <tag k="shop" v="sports"/>
+ </node>
+ <node id="8875452816" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4321054" lon="-99.1387681"/>
+ <node id="8875453017" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4317374" lon="-99.1386965"/>
+ <node id="8875453018" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4320131" lon="-99.1387769"/>
+ <node id="8875453019" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4320106" lon="-99.1388199"/>
+ <node id="8875453020" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435" lat="19.4317526" lon="-99.1388628"/>
+ <way id="4780792" visible="true" version="24" changeset="110482115" timestamp="2021-08-30T22:26:54Z" user="Geneviève de Paris" uid="12767435">
+  <nd ref="30341012"/>
+  <nd ref="30594809"/>
+  <nd ref="3772750754"/>
+  <nd ref="30594812"/>
+  <nd ref="30956904"/>
+  <nd ref="268639104"/>
+  <nd ref="268633522"/>
+  <nd ref="2434317331"/>
+  <nd ref="5868903526"/>
+  <nd ref="1983085867"/>
+  <nd ref="2434317335"/>
+  <nd ref="269994176"/>
+  <nd ref="270209445"/>
+  <nd ref="270209444"/>
+  <nd ref="270209447"/>
+  <nd ref="269994178"/>
+  <nd ref="3383901542"/>
+  <nd ref="269997729"/>
+  <nd ref="269994167"/>
+  <tag k="highway" v="residential"/>
+  <tag k="lanes" v="2"/>
+  <tag k="name" v="Calle Venustiano Carranza"/>
+  <tag k="oneway" v="yes"/>
+  <tag k="surface" v="asphalt"/>
+ </way>
+ <way id="24847028" visible="true" version="17" changeset="104599727" timestamp="2021-05-12T22:18:15Z" user="rallynukab" uid="9434617">
+  <nd ref="269987047"/>
+  <nd ref="3772750969"/>
+  <nd ref="3714135693"/>
+  <nd ref="268615862"/>
+  <nd ref="3772750754"/>
+  <nd ref="269956911"/>
+  <nd ref="269957015"/>
+  <tag k="alt_name" v="Calle de Bolivar"/>
+  <tag k="highway" v="tertiary"/>
+  <tag k="lanes" v="2"/>
+  <tag k="name" v="Calle Simón Bolívar"/>
+  <tag k="oneway" v="yes"/>
+  <tag k="surface" v="paving_stones"/>
+ </way>
+ <way id="217436704" visible="true" version="2" changeset="103229061" timestamp="2021-04-20T02:38:21Z" user="joshieadalid" uid="4847504">
+  <nd ref="2267025304"/>
+  <nd ref="2267025317"/>
+  <nd ref="2267025299"/>
+  <nd ref="2267025316"/>
+  <nd ref="2267025310"/>
+  <nd ref="2267025304"/>
+  <tag k="amenity" v="parking"/>
+  <tag k="parking" v="street_side"/>
+ </way>
+ <way id="403515317" visible="true" version="3" changeset="61798453" timestamp="2018-08-19T16:46:21Z" user="chachafish" uid="2237750">
+  <nd ref="4058637090"/>
+  <nd ref="4058637091"/>
+  <nd ref="4058637092"/>
+  <nd ref="4058637093"/>
+  <nd ref="4058637090"/>
+  <tag k="addr:city" v="Cuauhtémoc"/>
+  <tag k="addr:housenumber" v="39"/>
+  <tag k="addr:postcode" v="06000"/>
+  <tag k="addr:street" v="Venustiano Carranza"/>
+  <tag k="building" v="commercial"/>
+ </way>
+ <way id="526045679" visible="true" version="1" changeset="52197792" timestamp="2017-09-20T04:26:55Z" user="Daniel Specht" uid="2393795">
+  <nd ref="5116435430"/>
+  <nd ref="5116435427"/>
+  <nd ref="5116435428"/>
+  <nd ref="5116435429"/>
+  <nd ref="5116435430"/>
+  <tag k="building" v="yes"/>
+ </way>
+ <way id="526047283" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:27Z" user="Daniel Specht" uid="2393795">
+  <nd ref="5116451925"/>
+  <nd ref="5116451924"/>
+  <nd ref="5116451923"/>
+  <nd ref="5116451922"/>
+  <nd ref="5116451925"/>
+  <tag k="building" v="yes"/>
+ </way>
+ <way id="526047285" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:27Z" user="Daniel Specht" uid="2393795">
+  <nd ref="5116451933"/>
+  <nd ref="5116451932"/>
+  <nd ref="5116451931"/>
+  <nd ref="5116451930"/>
+  <nd ref="5116451933"/>
+  <tag k="building" v="yes"/>
+ </way>
+ <way id="526047289" visible="true" version="1" changeset="52197895" timestamp="2017-09-20T04:39:28Z" user="Daniel Specht" uid="2393795">
+  <nd ref="5116451947"/>
+  <nd ref="5116451946"/>
+  <nd ref="5116451945"/>
+  <nd ref="5116451944"/>
+  <nd ref="5116451947"/>
+  <tag k="building" v="yes"/>
+ </way>
+ <way id="959166365" visible="true" version="1" changeset="107156425" timestamp="2021-06-29T15:17:19Z" user="Geneviève de Paris" uid="12767435">
+  <nd ref="8875453017"/>
+  <nd ref="4058631209"/>
+  <nd ref="8875452816"/>
+  <nd ref="8875453018"/>
+  <nd ref="8875453019"/>
+  <nd ref="8875453020"/>
+  <nd ref="8875453017"/>
+  <tag k="addr:city" v="Ciudad de México"/>
+  <tag k="addr:housenumber" v="14"/>
+  <tag k="addr:postcode" v="06000"/>
+  <tag k="addr:street" v="Calle Venustiano Carranza"/>
+  <tag k="amenity" v="place_of_worship"/>
+  <tag k="building" v="yes"/>
+  <tag k="denomination" v="roman_catholic"/>
+  <tag k="name" v="Iglesia del Colegio de Niñas"/>
+  <tag k="religion" v="christian"/>
+ </way>
+</osm>
