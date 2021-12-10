@@ -19,6 +19,9 @@ import math
 #To calculate distance
 from math import radians, cos, sin, asin, sqrt
 
+#to check GPU
+import tensorflow as tf
+
 #create views here
 
 def showmap(request):
