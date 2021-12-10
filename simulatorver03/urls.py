@@ -29,4 +29,5 @@ urlpatterns = [
     path('',showmap,name='showmap'),
     path('showmapSimulator/', showmapSimulator),
     path('showmapInitial/', showmapInitial),
+ 
 ]
