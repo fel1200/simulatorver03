@@ -76,12 +76,24 @@ WSGI_APPLICATION = 'simulatorver03.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+#To use with postgress
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'simulatorTraffic',
+        'USER': 'simulatorTrafficUser',
+        'PASSWORD': '7fwvYJWKNtPpNFcWUKqkAX9CIkm3Fv',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}"""
 
 
 # Password validation
