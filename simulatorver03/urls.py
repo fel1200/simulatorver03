@@ -40,7 +40,7 @@ urlpatterns = [
     path('CPUArray/', pythonArray_views.pythonArray),
     path('GPU/', GPU_views.pythonGPU),
     #path('IntegrateGPU/', GPU_views.pythonGPUIntegrate),
-    path('TestIntegrationGPU/', testIntegration_views.testIntegrationGPU),
-    path('IntegrateGPU/', integrateGPU.pythonGPUIntegrate), 
+    path('TestIntegrationGPU/', testIntegration_views.testIntegrationGPU), #Generic GPU integration code 
+    path('IntegrateGPU/', integrateGPU.pythonGPUIntegrate), #GPU Integration to the model
 
 ]

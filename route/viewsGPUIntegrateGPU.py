@@ -265,6 +265,7 @@ def initModelIntegrateGPU():
 			#pdb.set_trace()	
 			#Updating zd to parallel processing
 			d_zd = cuda.to_device(zd)
+			pdb.set_trace()	
 			stepGPU[blocks_per_grid, threads_per_block](d_time, 
 				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
 				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
@@ -339,8 +340,20 @@ def initModelIntegrateGPU():
 			if (isPlotting):
 				plot(zps, h15s, h35s, weight54s, weight52s)
 
-#Trying to define a type to np array in kernel execution
-dt = np.dtype('float32')
+
+#Kernel GPU
+@cuda.jit
+def stepGPUIntegrate(d_time, 
+			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
+			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
+			 d_M_green_time_horizontal, 
+			 d_M_green_time_vertical,
+			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
+			 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POSM, d_NEGM):
+	pass
+
+
+
 
 
 #Kernel numba decorator
@@ -439,28 +452,6 @@ def stepGPU(d_time,
 			ei =math.exp(delta)
 			d_ak[idx,i] = 1/(1+ei)
 			
-		#Matrix diagonal of alpha and ak
-		
-		#alphaT = d_alpha[idx,].T
-		#alphaT = np.empty((9), dt)
-
-
-		#alphaT = np.array([[]], dtype=np.float64)
-		#alphaT = np.zeros((9),dtype=np.float32)
-		#alphaT = np.empty((9))
-		#alphaT = d_alpha[idx,]
-		
-		#Malpha= np.diag(alphaT)
-		#Malpha= np.diag(d_ak[idx,])
-		
-		#At CUDA some matrix functions are not available
-		#Then we need to recreate diagonal function for alpha and ak
-		#for x in range(9):
-		#	for y in range(9):
-		#		if x == y:
-		#			d_alpha_diag[idx,x,y] = d_alpha[idx,x]
-		#			d_ak_diag[idx,x,y] = d_alpha[idx,x]
-
 		d_alpha_diag = cuda.local.array((9,9),dtype=types.float32)
 		d_ak_diag = cuda.local.array((9,9),dtype=types.float32)
 
@@ -583,7 +574,7 @@ def updateCycle(z0,timeS):
 	return z0
 
 
-def pythonGPUIntegrate(request):
+def pythonGPUIntegrateRef(request):
 	#To measure time	
 	start = time.perf_counter()
 	initIntegrateModel()
@@ -593,14 +584,14 @@ def pythonGPUIntegrate(request):
 	return render(request,'showmap.html')
 
 
-def initIntegrateModel():
+def initIntegrateModelRef():
 	
 	#Bloques e hilos
-	blocksPerGrid = 4
-	threadsPerBlock = 4
+	blocks_per_grid = 4
+	threads_per_block = 4
 
 	#Samples
-	tspan = numpy.linspace(0,10,10) 
+	tspan = np.linspace(0,10,10) 
 	
 	arrayResults = np.zeros(1000)
 	d_arrayResults =  cuda.to_device(arrayResults)
@@ -608,7 +599,7 @@ def initIntegrateModel():
 	z0 = np.array([2,3])
 	#pdb.set_trace()
 	
-	integrateGPU[blocks_per_grid,threadsPerBlock](d_arrayResults)
+	integrateGPU[blocks_per_grid,threads_per_block](d_arrayResults)
 
 	arrayResults = d_arrayResults.copy_to_host(d_arrayResults)
 
