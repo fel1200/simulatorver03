@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 #To use GPU paralelization capabilites
 from numba import cuda, types
 
+#To use os and activate GPU debug
+import os
 
 
 def pythonGPUIntegrate(request):
@@ -38,6 +40,10 @@ def pythonGPUIntegrate(request):
 
 
 def initModelIntegrateGPU():
+	#Setting environment var to enable debug in GPU
+	os.environ['NUMBA_ENABLE_CUDASIM'] = "1"
+	#pdb.set_trace()					
+
 	#Globar vars
 	global ALPHA_MAX
 	ALPHA_MAX =.04
@@ -121,6 +127,8 @@ def initModelIntegrateGPU():
 	weight54 = np.zeros((simulations), dtype=float)
 	alpha = np.zeros((simulations,9), dtype=float)
 	ak = np.zeros((simulations,9), dtype=float)
+	alpha_diag = np.zeros((9,9), dtype=float)
+	ak_diag = np.zeros((9,9), dtype=float)
 
 	#Setting gammas in 0 for connection between segments
 	G = np.zeros((simulations,9,9), dtype=float)
@@ -189,6 +197,10 @@ def initModelIntegrateGPU():
 		POSM = np.empty((simulations,9,9), dtype = np.float32)
 		NEGM = np.empty((simulations,9,9), dtype = np.float32)
 
+		#To save temporary results of matrix operations 
+		POS = np.empty((simulations,9), dtype = np.float32)
+		NEG = np.empty((simulations,9), dtype = np.float32)
+
 		#pdb.set_trace()	
 
 
@@ -218,6 +230,8 @@ def initModelIntegrateGPU():
 
 		d_alpha = cuda.to_device(alpha)
 		d_ak = cuda.to_device(ak)
+		d_alpha_diag = cuda.to_device(alpha_diag)
+		d_ak_diag = cuda.to_device(ak_diag)
 
 
 		d_G = cuda.to_device(G)
@@ -252,6 +266,9 @@ def initModelIntegrateGPU():
 		d_POSM = cuda.to_device(POSM)
 		d_NEGM = cuda.to_device(NEGM)
 
+		d_POS = cuda.to_device(POS)
+		d_NEG = cuda.to_device(NEG)
+
 		#Number of samples in zd
 		samples = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME)	)
 	
@@ -272,83 +289,49 @@ def initModelIntegrateGPU():
 
 			tspan =np.linspace(t,t+STEP_TIME,int(STEP_TIME/SUB_STEP_TIME))
 			d_tspan = cuda.to_device(tspan)			
-			pdb.set_trace()	
+			#pdb.set_trace()	
 			stepGPUIntegrate[blocks_per_grid, threads_per_block](d_time, 
 				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
 				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
 				 d_M_green_time_horizontal, 
 				 d_M_green_time_vertical,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POSM, d_NEGM, d_tspan, d_zpAnt)
-			#To check results in host
-			#weight52 = d_weight52.copy_to_host()
+				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_zpAnt,d_alpha_diag, d_ak_diag)
 			
-			#To check results
-			"""
-			zd = d_zd.copy_to_host()
-			alpha = d_alpha.copy_to_host()
-			ak = d_ak.copy_to_host()
-			weight52 = d_weight52.copy_to_host()
-			weight54 = d_weight54.copy_to_host()
+			#transfer back to CPU to check info
+			POSM = d_POSM.copy_to_host()
+			NEGM = d_NEGM.copy_to_host()
+			POS = d_POS.copy_to_host()
+			NEG = d_NEG.copy_to_host()
+
 			h15 = d_h15.copy_to_host()
 			h35 = d_h35.copy_to_host()
-			"""
+			weight52 = d_weight52.copy_to_host()
+			weight54 = d_weight54.copy_to_host()
 
+			alpha = d_alpha.copy_to_host()
+			ak = d_ak.copy_to_host()
+			d_alpha_diag = d_alpha_diag.copy_to_host()
+			d_ak_diag = d_ak_diag.copy_to_host()
 
-			#alpha_diag = d_alpha_diag.copy_to_host()
-			#ak_diag = d_ak_diag.copy_to_host()
+			G = d_G.copy_to_host()
 
-			#pdb.set_trace()	
+			MAout = d_MAout.copy_to_host()
+			MAin = d_MAin.copy_to_host()
 
-			#First integration only with one value
-			
-			tspan =np.linspace(t,t+SUB_STEP_TIME,2)
-
-			
-
-	#		for green_time_horizontal in range(MIN_GREEN_TIME_HORIZONTAL,MAX_GREEN_TIME_HORIZONTAL):
-	#			for green_time_vertical in range(MIN_GREEN_TIME_VERTICAL,MAX_GREEN_TIME_VERTICAL):
-					#totalTime of traffic light cycles
-	#				totalTimeTrafficLights = green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME			
-
-					#time counter in cycle
-	#				t=0.00
-	#				counter = 0
-
-					#Matlab data to 1500 simulations, in python 900
-					
-				#tspan =np.linspace(t,t+STEP_TIME,int(STEP_TIME/SUB_STEP_TIME))
-					
-			for simulation in range(simulations):
-				#pdb.set_trace()
-				zps[simulation,] = odeint(updateCycle, zd[simulation], tspan,
+			pdb.set_trace()	
+			'''for simulation in range(simulations):
+				zps[simulation,] =a odeint(updateCycle, zd[simulation], tspan,
 				args=())
-				#pdb.set_trace()
 				zp = zps[simulation]
-				zd[simulation] = zp[-1]
+				zd[simulation] = zp[-1]'''
 
-				#pdb.set_trace()	
-				#zd[simulation] = zps[-1]
-			#z0 is the last value of odeint
-			
-
-			#Saving data in zps	
-			#zps = np.append(zps,zp, axis=0)
-
-			#counter+=1
-
-			#counterSimulations +=1
-			#print(counterSimulations)
-
-			#instead of SUB, we use subsub to integrate each value
-			#in GPU simulation		
 			t +=SUB_STEP_TIME
-			#print(t)
 			if (isPlotting):
 				plot(zps, h15s, h35s, weight54s, weight52s)
 
 @cuda.jit(device=True)
-def device_getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx ):
+def getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx ):
 	weight52Device = 0.00
 	weight54Device = 0.00
 	h_15Device = 0.00
@@ -432,11 +415,11 @@ def getAlpha_Ak(d_z0, d_zd, d_ZMAX, d_alpha, d_RHO, d_a_ALPHA_MAX, d_a_ALPHA_MIN
 		d_ak[idx,i] = 1/(1+ei)
 
 @cuda.jit(device=True)
-def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, idx):
+def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, d_alpha_diag, d_ak_diag, idx):
 	
 	#Diagonal operations
-	d_alpha_diag = cuda.local.array((9,9),dtype=types.float32)
-	d_ak_diag = cuda.local.array((9,9),dtype=types.float32)
+	#d_alpha_diag = cuda.local.array((9,9),dtype=types.float32)
+	#d_ak_diag = cuda.local.array((9,9),dtype=types.float32)
 	device_diag(d_alpha[idx,], d_alpha_diag)
 	device_diag(d_ak[idx,], d_ak_diag)
 
@@ -461,7 +444,7 @@ def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, id
 	#buffer4 save (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))
 	#This sentence complete first operations:
 	#POS = (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))		
-	usual_matrix_mult1d(d_buffer2,d_buffer3, d_POS)
+	usual_matrix_mult1d_idx(d_buffer2,d_buffer3, d_POS, idx)
 
 	#Here we start with NEG
 	#np.diag(d_zd[idx]
@@ -485,7 +468,7 @@ def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, id
 
 	#Final operation to get NEG
 	#NEG = -Malpha.dot(np.diag(d_zd[idx]).dot(np.multiply(d_MAout[idx,],G[idx,]).dot(np.diag(Mak))))
-	usual_matrix_mult1d(d_buffer1,d_buffer3, d_NEG)
+	usual_matrix_mult1d_idx(d_buffer1,d_buffer3, d_NEG, idx)
 
 @cuda.jit(device=True)
 def defineGammas(d_G, d_h15, d_h35, d_weight52, d_weight54, idx):
@@ -505,10 +488,10 @@ def funczp(d_time,
 			 d_M_green_time_horizontal, 
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_POS, d_NEG, idx):
+			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
+			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx):
 	#First status updating
-	d_weight52[idx],d_weight54[idx], d_h15[idx], d_h35[idx] = device_getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx)
+	d_weight52[idx],d_weight54[idx], d_h15[idx], d_h35[idx] = getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx)
 
 	#Then update alpha and ak values
 	getAlpha_Ak(d_z0, d_zd, d_ZMAX, d_alpha, d_RHO, d_a_ALPHA_MAX, d_a_ALPHA_MIN, d_ak, idx)
@@ -516,32 +499,33 @@ def funczp(d_time,
 	#Defining gammas for intersection connections
 	defineGammas(d_G, d_h15, d_h35, d_weight52, d_weight54, idx)
 
-	matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, idx)
+	matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_zd, d_POS, d_NEG, d_alpha_diag, d_ak_diag,idx)
 
-
+from pdb import set_trace
 
 #Kernel GPU
-@cuda.jit
+@cuda.jit(debug=True)
 def stepGPUIntegrate(d_time, 
 			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
 			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
 			 d_M_green_time_horizontal, 
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt):
-	
+			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG,
+			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag):
 	#getting thread index
 	idx = cuda.blockIdx.x*cuda.blockDim.x +cuda.threadIdx.x
-
+	
 	#idx lower than simulations
 	if idx< d_M_green_time_horizontal.shape[0]:
-		
+		print(idx)	
 		#Matrix operations
-		d_POS = cuda.local.array((9),dtype=types.float32)
-		d_NEG = cuda.local.array((9),dtype=types.float32)
+		#d_POS = cuda.local.array((9),dtype=types.float32)
+		#d_NEG = cuda.local.array((9),dtype=types.float32)
 		d_zp_ant = cuda.local.array((9),dtype=types.float32)
-		d_zz = cuda.local.array((d_tspan.shape[0],9),dtype=types.float32)
+		#d_zz = cuda.local.array((d_tspan.shape[0],9),dtype=types.float32)
+		#No permite la parte de shape, por lo que se pasa el 100 directo, revisar
+		d_zz = cuda.local.array((100,9),dtype=types.float32)
 		d_z = cuda.local.array((9),dtype=types.float32)
 		d_zp = cuda.local.array((9),dtype=types.float32)
 
@@ -551,27 +535,34 @@ def stepGPUIntegrate(d_time,
 			 d_M_green_time_horizontal, 
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_POS, d_NEG, idx)
+			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
+			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx)
 
-	for i in range(9):
-		d_zz[0,i] = d_z0[idx,i]
-		d_zp_ant[i] = d_POS[i]+d_NEG[i]
+	for j in range(9):
+		d_zz[0,j] = d_z0[idx,j]
+		d_zp_ant[j] = d_POS[idx,j]+d_NEG[idx,j]
 	i=0	
+
 	while d_time[0] < d_tspan[-1]:
-		dz = d_zz[i,:]
+		d_zd[idx] = d_zz[i,:]
 		funczp(d_time, 
 			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
 			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
 			 d_M_green_time_horizontal, 
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_POS, d_NEG, idx)
+			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_zd, d_POS, d_NEG, 
+			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx)
 		
-		for i in range(9):
-			d_zp[i] = d_POS[i]+d_NEG[i]
-			
+		for j in range(9):
+			d_zp[j] = d_POS[idx,j]+d_NEG[idx,j]
+		i =+ 1
+		
+		for j in range(9):
+			d_zz[i,j] = d_zz[i-1,j] +(d_zp[j]+d_zp_ant[j])*(.001/2) 
+
+		for j in range(9):
+			d_zp_ant[j]	= d_zp[j]
 		d_time[0] = d_time[0] + .001
 
 
@@ -777,6 +768,13 @@ def usual_matrix_mult1d(matrix1,matrix2, result):
 	for x in range(matrix1.shape[0]):
 		for y in range(matrix2.shape[0]):
 			result[x] += matrix1[x,y]*matrix2[y]
+
+@cuda.jit(device=True)
+def usual_matrix_mult1d_idx(matrix1,matrix2, result, idx):
+	#sum = 0.00
+	for x in range(matrix1.shape[0]):
+		for y in range(matrix2.shape[0]):
+			result[idx,x] += matrix1[x,y]*matrix2[y]
 
 
 @cuda.jit(device=True)

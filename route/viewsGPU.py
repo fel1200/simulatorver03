@@ -188,6 +188,10 @@ def initModelArray():
 		POSM = np.empty((simulations,9,9), dtype = np.float32)
 		NEGM = np.empty((simulations,9,9), dtype = np.float32)
 
+		#To save temporary results of matrix operations 
+		POS = np.empty((simulations,9), dtype = np.float32)
+		NEG = np.empty((simulations,9), dtype = np.float32)
+
 		#pdb.set_trace()	
 
 
@@ -249,6 +253,9 @@ def initModelArray():
 
 		d_POSM = cuda.to_device(POSM)
 		d_NEGM = cuda.to_device(NEGM)
+		d_POS = cuda.to_device(POS)
+		d_NEG = cuda.to_device(NEG)
+
 
 		#Number of samples in zd
 		samples = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME)	)
@@ -271,7 +278,17 @@ def initModelArray():
 				 d_M_green_time_horizontal, 
 				 d_M_green_time_vertical,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POSM, d_NEGM)
+				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM)
+			
+			#Get data back from GPU
+			POSM = d_POSM.copy_to_host()
+			NEGM = d_NEGM.copy_to_host()
+			POS = d_POS.copy_to_host()
+			NEG = d_NEG.copy_to_host()
+
+
+			pdb.set_trace()
+
 			#To check results in host
 			#weight52 = d_weight52.copy_to_host()
 			
@@ -315,7 +332,6 @@ def initModelArray():
 				#pdb.set_trace()
 				zps[simulation,] = odeint(updateCycle, zd[simulation], tspan,
 				args=())
-				#pdb.set_trace()
 				zp = zps[simulation]
 				zd[simulation] = zp[-1]
 
@@ -352,7 +368,7 @@ def stepGPU(d_time,
 			 d_M_green_time_horizontal, 
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-			 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POSM, d_NEGM):
+			 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM):
 	
 	idx = cuda.blockIdx.x*cuda.blockDim.x +cuda.threadIdx.x
 
@@ -483,8 +499,8 @@ def stepGPU(d_time,
 		d_buffer2 = cuda.local.array((9,9),dtype=types.float32)
 		
 		d_buffer3 = cuda.local.array((9),dtype=types.float32)
-		d_POS = cuda.local.array((9),dtype=types.float32)
-		d_NEG = cuda.local.array((9),dtype=types.float32)
+		#d_POS = cuda.local.array((9),dtype=types.float32)
+		#d_NEG = cuda.local.array((9),dtype=types.float32)
 		
 		#np.multiply = element-wise mutiplication
 		#np.dot = usual matrix multiplication
@@ -501,7 +517,7 @@ def stepGPU(d_time,
 		#buffer4 save (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))
 		#This sentence complete first operations:
 		#POS = (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))		
-		usual_matrix_mult1d(d_buffer2,d_buffer3, d_POS)
+		usual_matrix_mult1d_idx(d_buffer2,d_buffer3, d_POS, idx)
 
 		#Here we start with NEG
 		#np.diag(d_zd[idx]
@@ -525,10 +541,10 @@ def stepGPU(d_time,
 
 		#Final operation to get NEG
 		#NEG = -Malpha.dot(np.diag(d_zd[idx]).dot(np.multiply(d_MAout[idx,],G[idx,]).dot(np.diag(Mak))))
-		usual_matrix_mult1d(d_buffer1,d_buffer3, d_NEG)
+		usual_matrix_mult1d_idx(d_buffer1,d_buffer3, d_NEG, idx)
 
 		for i in range(9):
-			d_zd[idx,i] = d_POS[i]+d_NEG[i]
+			d_zd[idx,i] = d_POS[idx,i]+d_NEG[idx,i]
 
 
 #To be called only from device
@@ -568,6 +584,13 @@ def usual_matrix_mult1d(matrix1,matrix2, result):
 	for x in range(matrix1.shape[0]):
 		for y in range(matrix2.shape[0]):
 			result[x] += matrix1[x,y]*matrix2[y]
+
+@cuda.jit(device=True)
+def usual_matrix_mult1d_idx(matrix1,matrix2, result, idx):
+	#sum = 0.00
+	for x in range(matrix1.shape[0]):
+		for y in range(matrix2.shape[0]):
+			result[idx,x] += matrix1[x,y]*matrix2[y]
 
 
 @cuda.jit(device=True)
