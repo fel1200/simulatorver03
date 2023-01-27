@@ -142,6 +142,9 @@ def initModelIntegrateGPU():
 	zd = np.empty((simulations,9), dtype=float)
 	zpAnt = np.empty((simulations,9), dtype=float)
 
+	#empty array with 0s to save zz
+	zz = np.zeros((samplesbySimulation,9), dtype=float)
+
 	#to save traffic lights' parameters
 	M_green_time_horizontal = np.empty((simulations), dtype=np.int16)
 	M_green_time_vertical = np.empty((simulations), dtype=np.int16)
@@ -201,6 +204,9 @@ def initModelIntegrateGPU():
 		POS = np.empty((simulations,9), dtype = np.float32)
 		NEG = np.empty((simulations,9), dtype = np.float32)
 
+		zp = np.empty((simulations,9), dtype = np.float32)
+		zp_ant = np.empty((simulations,9), dtype = np.float32)
+
 		#pdb.set_trace()	
 
 
@@ -241,6 +247,8 @@ def initModelIntegrateGPU():
 		d_z0 = cuda.to_device(z0)
 		d_zpAnt = cuda.to_device(zpAnt)
 
+		d_zz = cuda.to_device(zz)
+
 		#Scalars passed as one value array
 		a_ALPHA_MAX = np.array([ALPHA_MAX])
 		a_ALPHA_MIN = np.array([ALPHA_MIN])
@@ -260,7 +268,7 @@ def initModelIntegrateGPU():
 
 		t= 0.00
 		#Time var saved in an array
-		a_time = np.array([t], dtype=np.float16)
+		a_time = np.zeros((simulations,1), dtype=np.float16)
 		d_time = cuda.to_device(a_time)
 
 		d_POSM = cuda.to_device(POSM)
@@ -269,17 +277,19 @@ def initModelIntegrateGPU():
 		d_POS = cuda.to_device(POS)
 		d_NEG = cuda.to_device(NEG)
 
+		d_zp = cuda.to_device(zp)
+		d_zp_ant = cuda.to_device(zp_ant)
+
 		#Number of samples in zd
 		samples = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME)	)
 	
 		zpSimulations = np.empty((samples,12),dtype=float)
 
-
-
 		while(t<TOTAL_TIME):
 
 			#Updating time eachCycle
-			a_time[0] = t
+			#for simulation in range(0, simulations):
+			#	a_time[0] = t
 			#Launching GPU numba kernel
 			d_time = cuda.to_device(a_time)
 
@@ -296,13 +306,20 @@ def initModelIntegrateGPU():
 				 d_M_green_time_horizontal, 
 				 d_M_green_time_vertical,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_zpAnt,d_alpha_diag, d_ak_diag)
+				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz)
 			
 			#transfer back to CPU to check info
 			POSM = d_POSM.copy_to_host()
 			NEGM = d_NEGM.copy_to_host()
 			POS = d_POS.copy_to_host()
 			NEG = d_NEG.copy_to_host()
+
+			zp_ant = d_zp_ant.copy_to_host()
+			zp = d_zp.copy_to_host()
+
+			zz = d_zz.copy_to_host()
+
+			zd = d_zd.copy_to_host()
 
 			h15 = d_h15.copy_to_host()
 			h35 = d_h35.copy_to_host()
@@ -336,10 +353,10 @@ def getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,
 	weight54Device = 0.00
 	h_15Device = 0.00
 	h_35Device = 0.00
-	div = int(d_time[0]/(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
+	div = int(d_time[idx,0]/(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
 			d_M_allred_time[idx]+d_M_green_time_vertical[idx]+
 			d_M_yellow_time[idx]+d_M_allred_time[idx]))
-	timeSM = d_time[0]-(div * (d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
+	timeSM = d_time[idx,0]-(div * (d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
 			d_M_allred_time[idx]+d_M_green_time_vertical[idx]+
 			d_M_yellow_time[idx]+d_M_allred_time[idx]))
 	if (timeSM>0 and timeSM<(d_M_green_time_horizontal[idx]+
@@ -489,7 +506,7 @@ def funczp(d_time,
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
 			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx):
+			 d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, idx):
 	#First status updating
 	d_weight52[idx],d_weight54[idx], d_h15[idx], d_h35[idx] = getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx)
 
@@ -506,28 +523,28 @@ from pdb import set_trace
 #Kernel GPU
 @cuda.jit(debug=True)
 def stepGPUIntegrate(d_time, 
-			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
-			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
-			 d_M_green_time_horizontal, 
-			 d_M_green_time_vertical,
-			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG,
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag):
+				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
+				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
+				 d_M_green_time_horizontal, 
+				 d_M_green_time_vertical,
+				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
+				 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz):
 	#getting thread index
 	idx = cuda.blockIdx.x*cuda.blockDim.x +cuda.threadIdx.x
 	
 	#idx lower than simulations
 	if idx< d_M_green_time_horizontal.shape[0]:
-		print(idx)	
+		#print(idx)	
 		#Matrix operations
 		#d_POS = cuda.local.array((9),dtype=types.float32)
 		#d_NEG = cuda.local.array((9),dtype=types.float32)
-		d_zp_ant = cuda.local.array((9),dtype=types.float32)
+		#d_zp_ant = cuda.local.array((9),dtype=types.float32)
 		#d_zz = cuda.local.array((d_tspan.shape[0],9),dtype=types.float32)
 		#No permite la parte de shape, por lo que se pasa el 100 directo, revisar
-		d_zz = cuda.local.array((100,9),dtype=types.float32)
+		#d_zz = cuda.local.array((100,9),dtype=types.float32)
 		d_z = cuda.local.array((9),dtype=types.float32)
-		d_zp = cuda.local.array((9),dtype=types.float32)
+		#d_zp = cuda.local.array((9),dtype=types.float32)
+		di = cuda.local.array((121),dtype=types.int32)
 
 		funczp(d_time, 
 			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
@@ -536,37 +553,51 @@ def stepGPUIntegrate(d_time,
 			 d_M_green_time_vertical,
 			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
 			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx)
-
-	for j in range(9):
-		d_zz[0,j] = d_z0[idx,j]
-		d_zp_ant[j] = d_POS[idx,j]+d_NEG[idx,j]
-	i=0	
-
-	while d_time[0] < d_tspan[-1]:
-		d_zd[idx] = d_zz[i,:]
-		funczp(d_time, 
-			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
-			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
-			 d_M_green_time_horizontal, 
-			 d_M_green_time_vertical,
-			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-			 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_zd, d_POS, d_NEG, 
-			 d_POSM, d_NEGM, d_tspan, d_zpAnt, d_alpha_diag, d_ak_diag, idx)
-		
-		for j in range(9):
-			d_zp[j] = d_POS[idx,j]+d_NEG[idx,j]
-		i =+ 1
-		
-		for j in range(9):
-			d_zz[i,j] = d_zz[i-1,j] +(d_zp[j]+d_zp_ant[j])*(.001/2) 
+			 d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, idx)
 
 		for j in range(9):
-			d_zp_ant[j]	= d_zp[j]
-		d_time[0] = d_time[0] + .001
+			d_zz[0,j] = d_z0[idx,j]
+			d_zp_ant[idx,j] = d_POS[idx,j]+d_NEG[idx,j]
+		di[idx] = 0	
+	
+		#while d_time[0] < d_tspan[-1]:
+		while d_time[idx,0] < (.002):
+			#print("TIEMPOOOOOOOOO",d_time[idx,0])
+
+			for j in range(9):
+				#d_zd[idx,j] = 0
+				#print("idx ", idx)
+				#print("j ", j)
+				#print("d_zd", d_zd[idx,j])
+				d_zd[idx,j] = d_zz[di[idx],j]
+			
+			funczp(d_time, 
+				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
+				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
+				 d_M_green_time_horizontal, 
+				 d_M_green_time_vertical,
+				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
+				 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
+				 d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, idx)
+			
+			for j in range(9):
+				d_zp[idx,j] = d_POS[idx,j]+d_NEG[idx,j]
+			
+			#print("I", i)
+			#i = i + 1
+			di[idx] = di[idx]+1
+			#print("I", di[idx])
+
+			
+			for j in range(9):
+				d_zz[di[idx],j] = d_zz[di[idx]-1,j] +(d_zp[idx,j]+d_zp_ant[idx,j])*(.001/2) 
+
+			for j in range(9):
+				d_zp_ant[j]	= d_zp[idx,j]
+			d_time[idx,0] = d_time[idx,0] + .001
 
 
-		#d_zd[idx,i] = d_POS[i]+d_NEG[i]
+			#d_zd[idx,i] = d_POS[i]+d_NEG[i]
 
 #Kernel numba decorator
 #Main function
