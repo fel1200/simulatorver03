@@ -217,11 +217,10 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 
 	#Update alpha and ak in each value
 	updateAlphaAk(alpha, ak, alphas,aks,counter, zd, zCars, isPlotting)
-
+	#pdb.set_trace()		
 	#Matrix diagonal of alpha and ak
 	Malpha= np.diag(alpha.T)
 	Mak= np.diag(ak.T)
-	#pdb.set_trace()		
 
 	#To know the state of cycle
 	div = int(timeS/(green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME))
@@ -230,7 +229,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 
 	#Updating gamma
 	updateG(G,h15,h35,weight52,weight54)
-
+	#pdb.set_trace()		
 	#To update after a complete cycle and don't mix data
 	zd_temp = zd.copy()
 	zd=updateInputOutput(G, zd, timeS, zd_temp, Malpha, Mak, MAin, MAout)
@@ -239,6 +238,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):
 
 
+	
 	POS = (Mak.dot(np.multiply(MAin,G))).dot(Malpha.dot(zd_temp))
 	#NEG = -np.diag(Mak).dot(np.multiply(MAout,G)).dot(Malpha.dot(np.diag(zd_temp)))
 	NEG = -Malpha.dot(np.diag(zd_temp).dot(np.multiply(MAout,G).dot(np.diag(Mak))))

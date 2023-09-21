@@ -82,7 +82,7 @@ def initModelArray():
 	TOTAL_TIME = 900
 
 	#To plot or not
-	isPlotting = False
+	isPlotting = True
 
 	#Number of samples in zd
 	samplesbySimulation = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME))
@@ -287,7 +287,7 @@ def initModelArray():
 			NEG = d_NEG.copy_to_host()
 
 
-			pdb.set_trace()
+			#pdb.set_trace()
 
 			#To check results in host
 			#weight52 = d_weight52.copy_to_host()
@@ -352,8 +352,8 @@ def initModelArray():
 			#in GPU simulation		
 			t +=SUB_STEP_TIME
 			#print(t)
-			if (isPlotting):
-				plot(zps, h15s, h35s, weight54s, weight52s)
+	if (isPlotting):
+		plot(zps, h15s, h35s, weight54s, weight52s)
 
 #Trying to define a type to np array in kernel execution
 dt = np.dtype('float32')
@@ -650,3 +650,78 @@ def integrateGPU():
 
 
 
+def plot(zps, h15s, h35s, weight54s, weight52s):
+		
+		pdb.set_trace()
+		plt.figure("Zp", dpi=150)
+
+		plt.subplot(3,4,1)
+		plt.xlabel('Time')
+		plt.ylabel("z7")
+		plt.plot(zps[:,6])
+
+		plt.subplot(3,4,2)
+		plt.xlabel('Time')
+		plt.ylabel("z3")
+		plt.plot(zps[:,2])
+
+		plt.subplot(3,4,3)
+		plt.xlabel('Time')
+		plt.ylabel("z4")
+		plt.plot(zps[:,3])
+
+		plt.subplot(3,4,4)
+		plt.xlabel('Time')
+		plt.ylabel("z9")
+		plt.plot(zps[:,8])
+
+		plt.subplot(3,4,5)
+		plt.xlabel('Time')
+		plt.ylabel("z6")
+		plt.plot(zps[:,5])
+
+		plt.subplot(3,4,6)
+		plt.xlabel('Time')
+		plt.ylabel("z1")
+		plt.plot(zps[:,0])
+
+		plt.subplot(3,4,7)
+		plt.xlabel('Time')
+		plt.ylabel("z2")
+		plt.plot(zps[:,1])
+
+		plt.subplot(3,4,8)
+		plt.xlabel('Time')
+		plt.ylabel("z8")
+		plt.plot(zps[:,7])
+
+		plt.subplot(3,4,9)
+		plt.xlabel('Time')
+		plt.ylabel("z5")
+		plt.plot(zps[:,4])
+
+		#plt.show()
+
+		
+		plt.figure("Flow horizontal-vertical weight")
+		plt.subplot(4,1,1)
+		plt.xlabel('Time')
+		plt.ylabel("h15")
+		plt.plot(h15s)
+
+		plt.subplot(4,1,2)
+		plt.xlabel('Time')
+		plt.ylabel("h35")
+		plt.plot(h35s)
+
+		plt.subplot(4,1,3)
+		plt.xlabel('Time')
+		plt.ylabel("w52")
+		plt.plot(weight52s)
+
+		plt.subplot(4,1,4)
+		plt.xlabel('Time')
+		plt.ylabel("w54")
+		plt.plot(weight54s)
+
+		plt.show()
