@@ -462,7 +462,7 @@ def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_buffer1, d_buffer2, 
 	device_diag(d_ak[idx,], d_ak_diag, idx)
 
 	
-	#to make operations with an specific matrix
+	#to make operations wi th an specific matrix
 	#d_buffer1 = cuda.local.array((9,9),dtype=types.float32)
 	#d_buffer2 = cuda.local.array((9,9),dtype=types.float32)
 	#d_buffer3 = cuda.local.array((9),dtype=types.float32)

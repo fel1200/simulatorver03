@@ -26,6 +26,7 @@ from route import viewsPythonArray as pythonArray_views
 from route import viewsGPU as GPU_views
 from route import testIntegration as testIntegration_views
 from route import viewsGPUIntegrateGPU as integrateGPU
+from route import homePage as home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,7 +41,13 @@ urlpatterns = [
     path('CPUArray/', pythonArray_views.pythonArray),
     path('GPU/', GPU_views.pythonGPU),
     #path('IntegrateGPU/', GPU_views.pythonGPUIntegrate),
-    path('TestIntegrationGPU/', testIntegration_views.testIntegrationGPU), #Generic GPU integration code 
+    path('TestIntegrationGPU/', testIntegration_views.testIntegrationGPU, name="gpuGenericIntegration"), #Generic GPU integration code 
     path('IntegrateGPU/', integrateGPU.pythonGPUIntegrate), #GPU Integration to the model
 
+]
+
+#To add html views
+
+urlpatterns += [
+    path('home/', home.home, name ='home')
 ]

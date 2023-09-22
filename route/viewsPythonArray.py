@@ -64,22 +64,22 @@ def initModelArray():
 
 	#times of vertical and horizontal		
 	global MIN_GREEN_TIME_HORIZONTAL
-	MIN_GREEN_TIME_HORIZONTAL = 20
+	MIN_GREEN_TIME_HORIZONTAL = 10
 
 	global MAX_GREEN_TIME_HORIZONTAL		
-	MAX_GREEN_TIME_HORIZONTAL = 61
+	MAX_GREEN_TIME_HORIZONTAL = 12
 
 	global MIN_GREEN_TIME_VERTICAL		
-	MIN_GREEN_TIME_VERTICAL = 20
+	MIN_GREEN_TIME_VERTICAL = 10
 
 	global MAX_GREEN_TIME_VERTICAL		
-	MAX_GREEN_TIME_VERTICAL = 61
+	MAX_GREEN_TIME_VERTICAL = 12
 
 	global TOTAL_TIME
 	TOTAL_TIME = 900
 
 	#To plot or not
-	isPlotting = False
+	isPlotting = True
 
 	#Number of samples in zd
 	samples = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME)	)
@@ -196,9 +196,9 @@ def initModelArray():
 
 
 	if (isPlotting):
-		#plot(zps, h15s, h35s, weight54s, weight52s)
+		plot(zps, h15s, h35s, weight54s, weight52s)
 		#np.savetxt("zps.csv", zps,delimiter = ',')
-		np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
+		#np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
 
 
 def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
@@ -243,7 +243,7 @@ def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):
 	#NEG = -np.diag(Mak).dot(np.multiply(MAout,G)).dot(Malpha.dot(np.diag(zd_temp)))
 	NEG = -Malpha.dot(np.diag(zd_temp).dot(np.multiply(MAout,G).dot(np.diag(Mak))))
 	zd = POS+NEG
-	pdb.set_trace()		
+	#pdb.set_trace()		
 	return zd 	
 	
 

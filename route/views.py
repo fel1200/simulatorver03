@@ -87,19 +87,19 @@ def showmapInitial(request):
 		1 = Mexico City
 		2 = Av. Gral. Garibaldi, Montevideo	
 	"""
-	selector = 2
+	selector = 1
 	if selector ==1:
 		#biggest selection on CDMX
 		#graph = ox.graph_from_bbox(19.4451, 19.4216,-99.1637,-99.1238, network_type='drive')
 		#m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=15)
 
 		#bigger selection on CDMX
-		graph = ox.graph_from_bbox(19.4362, 19.4244,-99.1478,-99.1279, network_type='drive')
-		m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
+		#graph = ox.graph_from_bbox(19.4362, 19.4244,-99.1478,-99.1279, network_type='drive')
+		#m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
 
 		#simple intersection on CDMX
-		#graph = ox.graph_from_bbox(19.43323, 19.42950,-99.14130,-99.13328, network_type='drive')
-		#m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
+		graph = ox.graph_from_bbox(19.43323, 19.42950,-99.14130,-99.13328, network_type='drive')
+		m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
 
 	else:
 		graph = ox.graph_from_bbox(-34.88791, -34.89025, -56.16213, -56.15824, network_type='drive')
