@@ -1,0 +1,124 @@
+:root{
+    --primary:#242038;
+    --secondary1:#725AC1;
+    --secondary2:#8D86C9;
+    --tertiary:#CAC4CE;
+    --brightContrast:#F7ECE1;
+    /*font sizes*/
+    --h0: 36px;
+    --h1: 32px;
+    --p1: 18px;
+
+ }
+ body{
+     font-family : 'Poppins', sans-serif;
+     }
+ .landing{
+     width:100%;
+     height:100vh;
+     display:grid;
+     grid-template-rows:1fr 1fr 1fr 1fr 1fr;
+     background-color: #E6E8F1;
+ }
+ .menu{
+     margin:16px;
+     display:grid;
+     height:70px;
+     grid-template-columns:90px 500px 800px;
+     /*justify-content: space-between;*/
+ }
+ .logo{
+     width:85px;
+     height:85px;
+     justify-self:center;
+     cursor:pointer;
+ }
+ .title{
+     padding: 0px 0px 0px 32px;
+     font-size: var(--h0);
+     justify-self: left;
+ }
+ .title h1{
+     color:var(--primary);
+     display:table-cell;
+     cursor:pointer;
+ }
+ ul{
+     list-style: none;
+     display:table-row;
+
+ }
+ ul li{
+     display:table-cell;
+     height:auto;
+     /*margin:10px;*/
+     vertical-align:middle;
+     color:var(--primary);
+ }
+ ul li a{
+     font-size: var(--p1);
+     display:table-cell;
+     vertical-align: middle;
+     height:50px;
+     padding:20px 30px;
+ }
+ .mainSection .mainImage{
+     max-width: 100%;
+     height: auto;
+ }
+ .mainSection .mainText{
+     position:absolute;
+     top:400px;
+     right:104px;
+ }
+ .mainSection .mainText h2{
+     font-size: var(--h1);
+     color:var(--brightContrast);
+ }
+ .mainSection .mainText .mainButton{
+     width:100%;
+     height:60px;
+     border-radius:8px;
+     border:none;
+     cursor:pointer;
+     font-size: var(--p1);
+     background-color: var(--secondary1);
+     color:var(--tertiary);
+
+ }
+ .secondSection{
+     margin: 16px;
+     display:grid;
+     grid-template-columns:600px 800px;
+     gap:10px;
+ } 
+ .secondSection .secondImage{
+     width:auto;
+     height:600px;
+     margin-left:128px;
+ }
+ .secondSection .secondText{
+     margin-top:32px;
+     display:grid;
+     grid-template-rows:300px 80px;
+     width:auto;
+     height:auto;
+
+ }
+ .secondSection .secondText h1{
+     color:var(--secondary2);
+     font-size: var(--h1);
+     font-weight:bold;
+     text-align: center;
+ }
+ .secondSection .secondText .secondButton{
+     width:100%;
+     height:60px;
+     border-radius:8px;
+     border:none;
+     cursor:pointer;
+     font-size: var(--p1);
+     background-color: var(--secondary1);
+     color:var(--brightContrast);
+
+ }

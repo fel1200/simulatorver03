@@ -1,0 +1,104 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'route/style.css' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="landing">
+    	<div class="mainSection">
+    		<nav class = "menu">
+	            <div class="logoContainer">
+                    {% load static %}
+                    <img src="{% static "route/images/icon.png" %}" alt = "logo" class="logo">
+                    <p class="titlePage">Traffic Performance</p>
+                </div>
+                <div class="searchContainer">
+                    <input placeholder="            Search models..." class="inputSearch"/>
+                    {% load static %}
+                    <img src="{% static "route/images/search.png" %}" alt = "logo" class="searchLogo">
+                </div>
+                <div class= "links">
+                                    <ul>
+                    <li>
+                        <a ref="/" class="firstLink">
+                            Simulator   
+                        </a>
+                    </li>
+                    <li>
+                        <a ref="/" class="">
+                            My models
+                        </a>
+                    </li>
+                    <li>
+                        <a ref="/" class="">
+                            Tutorials
+                        </a>
+                    </li>
+               </ul>
+
+                </div>
+    		</nav>
+    		<div class = "parameters">
+                <div class="titleParameters">
+                    {% load static %}
+                    <img src="{% static "route/images/parameters.png" %}" alt = "logo" class="logoParameters">
+                    <p class="parametersText">Parameters</p>
+                </div>
+                <div class="cardParameters">
+                    <div class="firstElementParameters">
+                       <p class="firstElementText">StreetSelection</p>      
+                        {% load static %}
+                        <img src="{% static "route/images/cruceroOpenStreetMap.png" %}" alt ="Crucero" class="imageCrucero"/>
+                    </div>
+                    <div class="secondElementParameters">
+                       <p class="firstElementText">Values</p>      
+                       <input placeholder="Value 1 TL 1" class="inputTL"/>
+                       <input placeholder="Value 2 TL 1" class="inputTL"/>
+                       <input placeholder="Value 1 TL 2" class="inputTL"/>
+                       <input placeholder="Value 2 TL 2" class="inputTL"/>
+
+                    </div>
+
+                </div>
+    		</div>
+    		<div class = "results">
+                <div class="titleResults">
+                    {% load static %}
+                    <img src="{% static "route/images/results.png" %}" alt = "logo" class="logoResults">
+                    <p class="parametersText">Results</p>
+                </div>
+                <div class="cardResults">
+                    {% load static %}
+                    <img src="{% static "route/images/resultsCharts.png" %}" alt ="results"  class="resultsCharts"/>
+                </div>
+    		</div>
+
+    	</div>
+    	<div class="rightSection">
+            <div class="rightTopSection">
+                       <p class="firstElementText">@lisMoore</p>      
+                       <p class="firstElementText">Liss Moore</p>      
+
+                {% load static %}
+                <img src="{% static "route/images/user.png" %}" alt ="Crucero"
+                class = "userImage">
+            </div>
+            <div class="rightMediumSection">
+            </div>
+            <div class="rightBottomSection">
+            </div>
+
+    	</div>
+
+    </div>
+    
+</body>
+</html>
