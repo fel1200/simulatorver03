@@ -1,7 +1,14 @@
 
+
+
+
+
+
 #Folium to draw maps, getroute from this project to get a from two points defined
 import folium
 from django.shortcuts import render,redirect
+from django.http import HttpResponse
+
 from . import getroute
 
 #code to fetch data from openstreet
@@ -36,7 +43,38 @@ from scipy import integrate
 #To debug
 import pdb
 
+#utilities
+import xml.dom.minidom 
+
+
 #create views here
+
+def parse(request):
+    #parse the information of the road
+    #xmldoc = xml.dom.minidom.parse('mapSimpleMex.osm')
+    xmldoc = xml.dom.minidom.parse('mapComplexMex.osm')
+
+    nodes = xmldoc.getElementsByTagName('node')
+    ways = xmldoc.getElementsByTagName('way')
+
+    #for node in nodes:
+        #print(node)
+    
+    message = str(len(nodes))+' nodes,'+ str(len(ways))+ ' ways' 
+    
+    #xmldoc2 = xml.dom.minidom.parseString(  )
+    """readbitlist = xmldoc.getElementsByTagName('node')
+    values = []
+    for s in readbitlist :
+        x = s.attributes['node'].value
+        values.append(x)
+    return render(request, 'parse.html', {'values': values})"""
+
+
+
+    return HttpResponse(message)
+
+
 
 def showmap(request):
     return render(request,'showmap.html')
@@ -74,7 +112,7 @@ def showmapSimulator(request):
 	context={'map':figure}
 	return render(request, 'showroute.html', context) 
 
-def showmapInitial(request):
+def showmapInitial(request, selector):
 	"""It shows the initial map to interact with"""
 	figure = folium.Figure()
 
@@ -84,24 +122,21 @@ def showmapInitial(request):
 	
 
 	"""Selector 
-		1 = Mexico City
-		2 = Av. Gral. Garibaldi, Montevideo	
+		1 = Mexico City, simple crossing
+		2 = Mexico City, medium square
+		3 = Mexico City, large square
+		4 = Av. Gral. Garibaldi, Montevideo	
 	"""
-	selector = 1
-	if selector ==1:
-		#biggest selection on CDMX
-		#graph = ox.graph_from_bbox(19.4451, 19.4216,-99.1637,-99.1238, network_type='drive')
-		#m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=15)
-
-		#bigger selection on CDMX
-		#graph = ox.graph_from_bbox(19.4362, 19.4244,-99.1478,-99.1279, network_type='drive')
-		#m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
-
-		#simple intersection on CDMX
+	if (selector == 1):
 		graph = ox.graph_from_bbox(19.43323, 19.42950,-99.14130,-99.13328, network_type='drive')
 		m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
-
-	else:
+	elif (selector == 2):
+		graph = ox.graph_from_bbox(19.4362, 19.4244,-99.1478,-99.1279, network_type='drive')
+		m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=25)
+	elif (selector == 3):
+		graph = ox.graph_from_bbox(19.4451, 19.4216,-99.1637,-99.1238, network_type='drive')
+		m = folium.Map(location=[19.4316592,-99.1385719], zoom_start=15)
+	elif (selector == 4):
 		graph = ox.graph_from_bbox(-34.88791, -34.89025, -56.16213, -56.15824, network_type='drive')
 		m = folium.Map(location=[-34.88948,-56.16025], zoom_start=25)
 	
