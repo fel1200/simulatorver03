@@ -4,7 +4,7 @@
     --secondary1:#36827F;
     --secondary2:#34A49F;
     --tertiary:#F9D86D;
-    --brightContrast:#E6E8F1;
+    --brightContrast:#F2F3F8;
     --brightContrast2:#F6F6FC;
     --brightContrast3:#F9F9FD;
     --white:#FFFFFF;
@@ -36,7 +36,6 @@
     width: 100%;
     height: 100px;
     flex-direction: row ;
-//    background-color: var(--primary2);
 }
 
  .logoContainer{
