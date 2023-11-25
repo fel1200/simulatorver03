@@ -69,26 +69,26 @@ def initModelIntegrateGPU():
 	STEP_TIME = .1
 
 	global SUB_STEP_TIME
-	SUB_STEP_TIME = .01
+	SUB_STEP_TIME = .001
 
 	#times of vertical and horizontal		
 	global MIN_GREEN_TIME_HORIZONTAL
 	MIN_GREEN_TIME_HORIZONTAL = 10
 
 	global MAX_GREEN_TIME_HORIZONTAL		
-	MAX_GREEN_TIME_HORIZONTAL = 21
+	MAX_GREEN_TIME_HORIZONTAL = 11
 
 	global MIN_GREEN_TIME_VERTICAL		
 	MIN_GREEN_TIME_VERTICAL = 10
 
 	global MAX_GREEN_TIME_VERTICAL		
-	MAX_GREEN_TIME_VERTICAL = 21
+	MAX_GREEN_TIME_VERTICAL = 11
 
 	global TOTAL_TIME
 	TOTAL_TIME = 900
 
 	#To plot or not
-	isPlotting = False
+	isPlotting = True
 
 	#Number of samples in zd
 	samplesbySimulation = int((TOTAL_TIME+1)*(1/SUB_STEP_TIME))
@@ -299,17 +299,31 @@ def initModelIntegrateGPU():
 	
 		zpSimulations = np.empty((samples,12),dtype=float)
 
-		while(t<TOTAL_TIME):
+		#while(t<TOTAL_TIME):
 
+		current_time = np.array([0.00])
+		d_current_time = cuda.to_device(current_time)
+
+		i = np.array([0])
+
+		#while(t<(t+SUB_STEP_TIME)):
+		while(current_time[0] < 900):	
+			
+			limit_time = np.array([current_time[0]+30])
 			#Updating time eachCycle
 			d_time = cuda.to_device(a_time)
+			d_limit_time = cuda.to_device(limit_time)			
+
+			d_i = cuda.to_device(i)
 
 			#pdb.set_trace()	
 			#Updating zd to parallel processing
 			d_zd = cuda.to_device(zd)
 			d_zd_diag = cuda.to_device(zd_diag)
 
-			tspan =np.linspace(t,t+STEP_TIME,int(STEP_TIME/SUB_STEP_TIME))
+			tspan =np.linspace(t,TOTAL_TIME,int(TOTAL_TIME/SUB_STEP_TIME))
+			#tspan =np.linspace(t,t+STEP_TIME,int(STEP_TIME/SUB_STEP_TIME))
+			#pdb.set_trace()	
 			d_tspan = cuda.to_device(tspan)			
 			
 			
@@ -319,21 +333,30 @@ def initModelIntegrateGPU():
 				 d_M_green_time_horizontal, 
 				 d_M_green_time_vertical,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-				 d_alpha,d_ak, d_G, d_buffer1, d_buffer2, d_buffer3, d_zps, d_zd, d_zd_diag, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz, d_tt)
+				 d_alpha,d_ak, d_G, d_buffer1, d_buffer2, d_buffer3, d_zps, d_zd, d_zd_diag, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz, d_tt, d_current_time, d_limit_time, d_i)
 			#transfer back to CPU to check info
+			current_time = d_current_time.copy_to_host()
+			limit_time = d_limit_time.copy_to_host()
+
+
 			POSM = d_POSM.copy_to_host()
 			NEGM = d_NEGM.copy_to_host()
 			POS = d_POS.copy_to_host()
 			NEG = d_NEG.copy_to_host()
 
+			
 			zp_ant = d_zp_ant.copy_to_host()
 			zp = d_zp.copy_to_host()
 
-			z0 = d_z0.copy_to_host()
+			i = d_i.copy_to_host()
+
+
+			a_time = d_time.copy_to_host()
 
 			zz = d_zz.copy_to_host()
 			tt = d_tt.copy_to_host()
 
+			z0 = zz[0,0:i[0],]
 			
 			zd = d_zd.copy_to_host()
 			zd_diag = d_zd_diag.copy_to_host()
@@ -356,16 +379,23 @@ def initModelIntegrateGPU():
 
 			MAout = d_MAout.copy_to_host()
 			MAin = d_MAin.copy_to_host()
-			pdb.set_trace()	
+			
+			#pdb.set_trace()	
+			#if (isPlotting):
+			#	plot(zz[0,0:3000,], h15s, h35s, weight54s, weight52s)
+
 			'''for simulation in range(simulations):
 				zps[simulation,] =a odeint(updateCycle, zd[simulation], tspan,
 				args=())
 				zp = zps[simulation]
 				zd[simulation] = zp[-1]'''
-
+			#print(t)	
 			t +=SUB_STEP_TIME
-			if (isPlotting):
-				plot(zps, h15s, h35s, weight54s, weight52s)
+		np.savetxt("zz.csv", zz[0,0:90000],delimiter = ',')
+		if (isPlotting):
+			plot(zz[0,0:90000,], h15s, h35s, weight54s, weight52s)
+			#plot(zps, h15s, h35s, weight54s, weight52s)
+			#plot(zps, h15s, h35s, weight54s, weight52s)
 
 @cuda.jit(device=True)
 def getState(d_time,d_M_green_time_horizontal, d_M_yellow_time, d_M_allred_time,d_M_green_time_vertical, d_ak, idx ):
@@ -454,6 +484,15 @@ def getAlpha_Ak(d_z0, d_zd, d_ZMAX, d_alpha, d_RHO, d_a_ALPHA_MAX, d_a_ALPHA_MIN
 @cuda.jit(device=True)
 def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_buffer1, d_buffer2, d_buffer3, d_zd, d_zd_diag, d_POS, d_NEG, d_alpha_diag, d_ak_diag, idx):
 	
+	#cleaning up buffers
+	d_buffer1[:] = 0
+	d_buffer2[:] = 0
+	d_buffer3[:] = 0
+
+	#cleaning up POS and NEG
+	d_POS[:] = 0
+	d_NEG[:]=0
+
 	#Diagonal operations
 	#d_alpha_diag = cuda.local.array((9,9),dtype=types.float32)
 	#d_ak_diag = cuda.local.array((9,9),dtype=types.float32)
@@ -495,6 +534,7 @@ def matrixOperations(d_alpha, d_ak, d_MAin, d_MAout, d_G, d_buffer1, d_buffer2, 
 	d_buffer1[:] = 0
 	d_buffer2[:] = 0
 	d_buffer3[:] = 0
+
 
 	#-Malpha.dot(np.diag(d_zd[idx])		
 	usual_matrix_mult(d_alpha_diag[idx,], d_zd_diag[idx,] , d_buffer1, idx)		
@@ -567,7 +607,7 @@ def stepGPUIntegrate(d_time,
 				 d_M_green_time_horizontal, 
 				 d_M_green_time_vertical,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-				 d_alpha,d_ak, d_G, d_buffer1, d_buffer2, d_buffer3, d_zps, d_zd, d_zd_diag, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz, d_tt):
+				 d_alpha,d_ak, d_G, d_buffer1, d_buffer2, d_buffer3, d_zps, d_zd, d_zd_diag, d_z0, d_POS, d_NEG, d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, d_zp_ant, d_zp, d_zz, d_tt, d_current_time, d_limit_time,d_i):
 	#getting thread index
 	idx = cuda.blockIdx.x*cuda.blockDim.x +cuda.threadIdx.x
 	
@@ -575,9 +615,8 @@ def stepGPUIntegrate(d_time,
 	#if idx< d_M_green_time_horizontal.shape[0]:
 	if idx ==0:
 		d_z = cuda.local.array((9),dtype=types.float32)
-		di = cuda.local.array((121),dtype=types.int32)
+		#di = cuda.local.array((121),dtype=types.int32)
 
-		#d_zz[idx,0,] = d_z0[idx,]
 
 		funczp(d_time, 
 			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
@@ -591,12 +630,14 @@ def stepGPUIntegrate(d_time,
 		for j in range(9):
 			d_zz[idx,0,j] = d_z0[idx,j]
 			d_zp_ant[idx,j] = d_POS[idx,j]-d_NEG[idx,j]
-		di[idx] = 0
-		i = 0	
-		while d_time[idx,0] < (.03):
+		#d_i[0] = 0
+		#i = 0	
+		
+		#while d_time[idx,0] < (30): #For testing purposes
+		while d_current_time[0] < d_limit_time[0]:
 			for j in range(9):
-				d_z0[idx,j] = d_zz[idx,i,j]
-				d_zd[idx,j] = d_zz[idx,i,j]
+				d_z0[idx,j] = d_zz[idx,d_i[0],j]
+				d_zd[idx,j] = d_zz[idx,d_i[0],j]
 			funczp(d_time, 
 				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
 				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
@@ -605,218 +646,16 @@ def stepGPUIntegrate(d_time,
 				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
 				 d_weight54,d_alpha,d_ak, d_G, d_buffer1, d_buffer2, d_buffer3, d_zps, d_zd, d_zd_diag, d_z0, d_POS, d_NEG, 
 				 d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, idx)
-			i = i+1
+			d_i[0] = d_i[0]+1
 			for j in range(9):
 				d_zp[idx,j] = d_POS[idx,j]-d_NEG[idx,j]
-				d_zz[idx,i,j] = d_zz[idx,i-1,j]+(d_zp[idx,j]+d_zp_ant[idx,j])*(.01 /2)
+				d_zz[idx,d_i[0],j] = d_zz[idx,d_i[0]-1,j]+(d_zp[idx,j]+d_zp_ant[idx,j])*(.01 /2)
 				d_zp_ant[idx,j] =d_zp[idx,j]
-			d_time[idx,0] = d_time[idx,0] + .01
-
-	
-		"""
-		#while d_time[0] < d_tspan[-1]:
-		"""
-		"""
-		while d_time[idx,0] < (.002):
-			print("TIEMPOOOOOOOOO",d_time[idx,0])
-			d_time[idx,0] = d_time[idx,0] + .001
-			
-			for j in range(9):
-				#d_zd[idx,j] = 0
-				#print("idx ", idx)
-				#print("j ", j)
-				#print("d_zd", d_zd[idx,j])
-				d_zd[idx,j] = d_zz[di[idx],j]
-			
-			funczp(d_time, 
-				d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
-				d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
-				 d_M_green_time_horizontal, 
-				 d_M_green_time_vertical,
-				 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52,
-				 d_weight54,d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POS, d_NEG, 
-				 d_POSM, d_NEGM, d_tspan, d_alpha_diag, d_ak_diag, idx)
-			
-			for j in range(9):
-				d_zp[idx,j] = d_POS[idx,j]+d_NEG[idx,j]
-			
-			#print("I", i)s
-			#i = i + 1
-			di[idx] = di[idx]+1
-			#print("I", di[idx])
-
-			
-			for j in range(9):
-				d_zz[di[idx],j] = d_zz[di[idx]-1,j] +(d_zp[idx,j]+d_zp_ant[idx,j])*(.001/2) 
-
-			for j in range(9):
-				d_zp_ant[j]	= d_zp[idx,j]
-			d_time[idx,0] = d_time[idx,0] + .001
+			d_tt[idx,d_i[0]] = d_time[idx,0] 
+			#d_time[idx,0] = d_time[idx,0] + .01
+			d_current_time[0] = d_current_time[0] +.01
 
 
-			#d_zd[idx,i] = d_POS[i]+d_NEG[i]"""
-
-#Kernel numba decorator
-#Main function
-@cuda.jit
-def stepGPU(d_time, 
-			d_a_ALPHA_MAX,d_a_ALPHA_MIN, d_RHO, 
-			d_a_KI, d_a_CHI, d_ZMAX, d_MAout,d_MAin,
-			 d_M_green_time_horizontal, 
-			 d_M_green_time_vertical,
-			 d_M_yellow_time, d_M_allred_time,d_h15, d_h35,d_weight52, d_weight54,
-			 d_alpha,d_ak, d_G, d_zps, d_zd, d_z0, d_POSM, d_NEGM):
-	
-	idx = cuda.blockIdx.x*cuda.blockDim.x +cuda.threadIdx.x
-
-	if idx< d_M_green_time_horizontal.shape[0]:
-		#State machine function
-		#In the future check if could be defined a separate function
-		div = int(d_time[0]/(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-			d_M_allred_time[idx]+d_M_green_time_vertical[idx]+
-			d_M_yellow_time[idx]+d_M_allred_time[idx]))
-		timeSM = d_time[0]-(div * (d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-			d_M_allred_time[idx]+d_M_green_time_vertical[idx]+
-			d_M_yellow_time[idx]+d_M_allred_time[idx]))
-
-
-		if (timeSM>0 and timeSM<(d_M_green_time_horizontal[idx]+
-			d_M_yellow_time[idx])):
-			#currentState = 1
-			d_weight52[idx] = 0.6
-			d_weight54[idx] = 0.4
-			d_h15[idx] = 1
-			d_h35[idx] = 0
-		elif (timeSM>=(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]) and 
-			timeSM<(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx])):
-			#currentState = 2
-			d_weight52[idx] = 0.6
-			d_weight54[idx] = 0.4
-			d_h15[idx] = 0
-			d_h35[idx] = 0
-		elif (timeSM>=(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx]) 
-			and (timeSM<(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx]+d_M_green_time_vertical[idx]+d_M_yellow_time[idx]))):
-			#currentState = 3
-			d_weight52[idx] = 0.4
-			d_weight54[idx] = 0.6
-			d_h15[idx] = 0
-			d_h35[idx] = 1
-		elif (timeSM>=(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx]+d_M_green_time_vertical[idx]+d_M_yellow_time[idx]) 
-			and (timeSM<(d_M_green_time_horizontal[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx]+d_M_green_time_vertical[idx]+d_M_yellow_time[idx]+
-				d_M_allred_time[idx]))):
-			#currentState = 4
-			d_weight52[idx] = 0.4
-			d_weight54[idx] = 0.6
-			d_h15[idx] = 0
-			d_h35[idx] = 0
-		else:
-			#currentState = 1
-			#time=0
-			d_weight52[idx] = 0.6
-			d_weight54[idx] = 0.4
-			d_h15[idx] = 1
-			d_h35[idx] = 0
-
-		for i in range(0,9):
-			#First checking if z isn't greater or lower that alloweda values
-			if d_z0[idx,i]>d_ZMAX[i]:
-				d_z0[idx,i]=ZMAX[i]
-			elif d_z0[idx,i] < 0.00:
-				d_z0[idx,i] = 0.00
-			#Copying z0 to zd as a backup array to make calculations 
-			#in next steps
-			d_zd[idx,i] = d_z0[idx,i]
-			
-			#Getting alpha values
-			d_alpha[idx,i] = 0.00
-			if (d_zd[idx,i] < d_RHO[i]):
-				d_alpha[idx,i] = d_a_ALPHA_MAX[0]
-			elif ((d_zd[idx,i] > d_RHO[i]) and 
-				(d_zd[idx,i] <= d_ZMAX[i])):
-				d_alpha[idx,i] = ((d_a_ALPHA_MAX[0]-d_a_ALPHA_MIN[0])/(d_RHO[i]-d_ZMAX[i]))*(d_zd[idx,i]-d_ZMAX[i])+d_a_ALPHA_MIN[0]
-			elif ((d_zd[idx,i]>d_ZMAX[i])):
-				d_alpha[idx,i] = d_a_ALPHA_MIN[0]
-
-			#Getting ak values	
-			ak = 1.0
-			zk = d_zd[idx,i]
-			delta = (15*((zk/d_ZMAX[i]) - 0.7))
-			ei =math.exp(delta)
-			d_ak[idx,i] = 1/(1+ei)
-			
-		d_alpha_diag = cuda.local.array((9,9),dtype=types.float32)
-		d_ak_diag = cuda.local.array((9,9),dtype=types.float32)
-
-		device_diag(d_alpha[idx,], d_alpha_diag)
-		device_diag(d_ak[idx,], d_ak_diag)
-		
-		#Defining gammas for intersection connections
-		
-		d_G[idx,0,4] = d_h15[idx] #Gamma for connection 1,5
-		d_G[idx,4,0] = d_h15[idx] #Gamma for connection 1,5
-		d_G[idx,2,4] = d_h35[idx] #Gamma for connection 3,5
-		d_G[idx,4,2] = d_h35[idx] #Gamma for connection 3,5
-		d_G[idx,4,1] = d_weight52[idx] #Gamma weight for connection 5,2
-		d_G[idx,1,4] = d_weight52[idx] #Gamma weight for connection 5,2
-		d_G[idx,4,3] = d_weight54[idx] #Gamma for connection 5,4 
-		d_G[idx,3,4] = d_weight54[idx] #Gamma for connection 5,4
-		
-		#to make operations with an specific matrix
-		d_buffer1 = cuda.local.array((9,9),dtype=types.float32)
-		d_buffer2 = cuda.local.array((9,9),dtype=types.float32)
-		
-		d_buffer3 = cuda.local.array((9),dtype=types.float32)
-		d_POS = cuda.local.array((9),dtype=types.float32)
-		d_NEG = cuda.local.array((9),dtype=types.float32)
-		
-		#np.multiply = element-wise mutiplication
-		#np.dot = usual matrix multiplication
-
-		#buffer1 save np.multiply(d_MAin[idx,],G[idx,])
-		element_matrix_mult(idx,d_MAin,d_G, d_buffer1)
-
-		#buffer2 save (Mak.dot(np.multiply(d_MAin[idx,],G[idx,])))
-		usual_matrix_mult(d_ak_diag ,d_buffer1, d_buffer2)
-
-		#buffer3 save Malpha.dot(d_zd[idx])
-		usual_matrix_mult1d(d_alpha_diag,d_zd[idx,], d_buffer3)
-
-		#buffer4 save (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))
-		#This sentence complete first operations:
-		#POS = (Mak.dot(np.multiply(d_MAin[idx,],G[idx,]))).dot(Malpha.dot(d_zd[idx]))		
-		usual_matrix_mult1d(d_buffer2,d_buffer3, d_POS)
-
-		#Here we start with NEG
-		#np.diag(d_zd[idx]
-		#zd diag
-		d_zd_diag = cuda.local.array((9,9),dtype=types.float32)
-		device_diag(d_zd[idx,], d_zd_diag)
-
-		#-Malpha.dot(np.diag(d_zd[idx])		
-		usual_matrix_mult(d_alpha_diag,d_zd_diag, d_buffer1)		
-		
-		#np.multiply(d_MAout[idx,],G[idx,])
-		element_matrix_mult(idx,d_MAout,d_G, d_buffer2)
-
-
-
-		#buffer3 save (np.multiply(d_MAout[idx,],G[idx,]).dot(np.diag(Mak)))
-		#operation with Ak like vector no matrix, because
-		#in original operation is a double diag
-
-		usual_matrix_mult1d(d_buffer2,d_ak[idx,], d_buffer3)
-
-		#Final operation to get NEG
-		#NEG = -Malpha.dot(np.diag(d_zd[idx]).dot(np.multiply(d_MAout[idx,],G[idx,]).dot(np.diag(Mak))))
-		usual_matrix_mult1d(d_buffer1,d_buffer3, d_NEG)
-
-		for i in range(9):
-			d_zd[idx,i] = d_POS[i]+d_NEG[i]
 
 
 #To be called only from device
@@ -878,47 +717,95 @@ def updateCycle(z0,timeS):
 	return z0
 
 
-def pythonGPUIntegrateRef(request):
-	#To measure time	
-	start = time.perf_counter()
-	initIntegrateModel()
-	finish = time.perf_counter()
-	print(f'Finished in {round(finish-start,2)} second(s)')
-
-	return render(request,'showmap.html')
-
-
-def initIntegrateModelRef():
-	
-	#Bloques e hilos
-	blocks_per_grid = 4
-	threads_per_block = 4
-
-	#Samples
-	tspan = np.linspace(0,10,10) 
-	
-	arrayResults = np.zeros(1000)
-	d_arrayResults =  cuda.to_device(arrayResults)
-
-	z0 = np.array([2,3])
-	#pdb.set_trace()
-	
-	integrateGPU[blocks_per_grid,threads_per_block](d_arrayResults)
-
-	arrayResults = d_arrayResults.copy_to_host(d_arrayResults)
-
-	plt.figure("Zp", dpi=150)
-
-	plt.subplot(3,4,1)
-	plt.xlabel('Time')
-	plt.ylabel("z7")
-	plt.plot(zps[:,6])
 
 
 
 @cuda.jit
 def integrateGPU():
 	pass
+
+
+
+def plot(zps, h15s, h35s, weight54s, weight52s):
+		
+		
+				
+		plt.figure("Zp", dpi=150)
+
+		plt.subplot(3,4,1)
+		plt.xlabel('Time')
+		plt.ylabel("z7")
+		plt.plot(zps[:,6])
+
+		plt.subplot(3,4,2)
+		plt.xlabel('Time')
+		plt.ylabel("z3")
+		plt.plot(zps[:,2])
+
+		plt.subplot(3,4,3)
+		plt.xlabel('Time')
+		plt.ylabel("z4")
+		plt.plot(zps[:,3])
+
+		plt.subplot(3,4,4)
+		plt.xlabel('Time')
+		plt.ylabel("z9")
+		plt.plot(zps[:,8])
+
+		plt.subplot(3,4,5)
+		plt.xlabel('Time')
+		plt.ylabel("z6")
+		plt.plot(zps[:,5])
+
+		plt.subplot(3,4,6)
+		plt.xlabel('Time')
+		plt.ylabel("z1")
+		plt.plot(zps[:,0])
+
+		plt.subplot(3,4,7)
+		plt.xlabel('Time')
+		plt.ylabel("z2")
+		plt.plot(zps[:,1])
+
+		plt.subplot(3,4,8)
+		plt.xlabel('Time')
+		plt.ylabel("z8")
+		plt.plot(zps[:,7])
+
+		plt.subplot(3,4,9)
+		plt.xlabel('Time')
+		plt.ylabel("z5")
+		plt.plot(zps[:,4])
+
+		#plt.show()
+
+		"""
+		plt.figure("Flow horizontal-vertical weight")
+		plt.subplot(4,1,1)
+		plt.xlabel('Time')
+		plt.ylabel("h15")
+		plt.plot(h15s)
+
+		plt.subplot(4,1,2)
+		plt.xlabel('Time')
+		plt.ylabel("h35")
+		plt.plot(h35s)
+
+		plt.subplot(4,1,3)
+		plt.xlabel('Time')
+		plt.ylabel("w52")
+		plt.plot(weight52s)
+
+		plt.subplot(4,1,4)
+		plt.xlabel('Time')
+		plt.ylabel("w54")
+		plt.plot(weight54s)"""
+
+		plt.show()
+
+
+
+
 
 
 

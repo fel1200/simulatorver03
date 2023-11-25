@@ -1,3 +1,5 @@
+
+
 #Python version to check a GPU integration
 
 #To render
@@ -142,6 +144,7 @@ def odeFelCPU(tspan,z0, sample, k1, k2):
 	while (t<(tf-sample)):
 		z=zz[i,:]
 		zp=fUpdateCPU(t,z,k1,k2)
+		pdb.set_trace()
 		i+=1
 		zz[i,0] = zz[i-1,0]+(zp[0]+zp_ant[0])*(sample/2)
 		zz[i,1] = zz[i-1,1]+(zp[1]+zp_ant[1])*(sample/2)

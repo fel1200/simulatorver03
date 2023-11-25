@@ -188,9 +188,10 @@ def initModelArray():
 
 
 
+
 	if (isPlotting):
 		plot(zps, h15s, h35s, weight54s, weight52s)
-		#np.savetxt("zps.csv", zps,delimiter = ',')
+		np.savetxt("zps.csv", zps,delimiter = ',')
 		#np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
 
 
@@ -199,6 +200,8 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 					weight54, h15, h35, t, 
 					green_time_horizontal, green_time_vertical,
 					weight52s, weight54s, h15s, h35s, G, isPlotting, ZMAX, zCars, MAin, MAout):
+	print("Enter", timeS)
+	pdb.set_trace()					
 	for i in range(0,9):
 		if z0[i]>ZMAX[i]:
 			#pdb.set_trace()		
@@ -206,6 +209,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 		elif z0[i] < 0.00:
 			z0[i] = 0.00
 	#Saving z0 as the new zd		
+	
 	zd = z0.copy()
 
 	#Update alpha and ak in each value
@@ -222,11 +226,10 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 
 	#Updating gamma
 	updateG(G,h15,h35,weight52,weight54)
-	#pdb.set_trace()		
 	#To update after a complete cycle and don't mix data
 	zd_temp = zd.copy()
 	zd=updateInputOutput(G, zd, timeS, zd_temp, Malpha, Mak, MAin, MAout)
-	#pdb.set_trace()					
+	pdb.set_trace()		
 	return zd
 
 def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):
