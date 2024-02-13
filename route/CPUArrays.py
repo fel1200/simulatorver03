@@ -56,16 +56,16 @@ def initModelArray():
 
 	#times of vertical and horizontal		
 	global MIN_GREEN_TIME_HORIZONTAL
-	MIN_GREEN_TIME_HORIZONTAL = 10
+	MIN_GREEN_TIME_HORIZONTAL = 20
 
 	global MAX_GREEN_TIME_HORIZONTAL		
-	MAX_GREEN_TIME_HORIZONTAL = 12
+	MAX_GREEN_TIME_HORIZONTAL = 21
 
 	global MIN_GREEN_TIME_VERTICAL		
-	MIN_GREEN_TIME_VERTICAL = 10
+	MIN_GREEN_TIME_VERTICAL = 20
 
 	global MAX_GREEN_TIME_VERTICAL		
-	MAX_GREEN_TIME_VERTICAL = 12
+	MAX_GREEN_TIME_VERTICAL = 21
 
 	global TOTAL_TIME
 	TOTAL_TIME = 900
@@ -99,9 +99,11 @@ def initModelArray():
 
 	for green_time_horizontal in range(MIN_GREEN_TIME_HORIZONTAL,MAX_GREEN_TIME_HORIZONTAL):
 		for green_time_vertical in range(MIN_GREEN_TIME_VERTICAL,MAX_GREEN_TIME_VERTICAL):
+			#print("Green_time_horizontal", green_time_horizontal)
+			#print("Green_time_vertical", green_time_vertical)
 			#totalTime of traffic light cycles
 			totalTime = green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME			
-
+			#pdb.set_trace()
 			#To plot values
 			weight52s = np.zeros((samples), dtype=float)
 			weight54s = np.zeros((samples), dtype=float)
@@ -156,7 +158,7 @@ def initModelArray():
 
 			#Matlab data to 1500 simulations, in python 900
 			while(t<TOTAL_TIME): 
-				
+				#print("t",t)	
 				tspan =np.linspace(t,t+STEP_TIME,int(STEP_TIME/SUB_STEP_TIME))
 				#pdb.set_trace()					
 				zp = odeint(updateCycle, z0, tspan,
@@ -181,17 +183,17 @@ def initModelArray():
 				counter+=1
 				counterTotal+=1
 				t +=STEP_TIME
-				print(counter)
+				#print(counter)
 			counterSimulations +=1
-			#if(counterSimulations%10==0):
-			#print(counterSimulations)
+			if(counterSimulations%10==0):
+				print(counterSimulations)
 
 
 
 
 	if (isPlotting):
 		plot(zps, h15s, h35s, weight54s, weight52s)
-		np.savetxt("zps.csv", zps,delimiter = ',')
+		#np.savetxt("zps.csv", zps,delimiter = ',')
 		#np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
 
 
@@ -200,8 +202,8 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 					weight54, h15, h35, t, 
 					green_time_horizontal, green_time_vertical,
 					weight52s, weight54s, h15s, h35s, G, isPlotting, ZMAX, zCars, MAin, MAout):
-	print("Enter", timeS)
-	pdb.set_trace()					
+	#print("Enter", timeS)
+#	pdb.set_trace()					
 	for i in range(0,9):
 		if z0[i]>ZMAX[i]:
 			#pdb.set_trace()		
@@ -229,7 +231,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 	#To update after a complete cycle and don't mix data
 	zd_temp = zd.copy()
 	zd=updateInputOutput(G, zd, timeS, zd_temp, Malpha, Mak, MAin, MAout)
-	pdb.set_trace()		
+#	pdb.set_trace()		
 	return zd
 
 def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):

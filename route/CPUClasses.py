@@ -57,16 +57,16 @@ def initModelClasses():
 
 	#times of vertical and horizontal		
 	global MIN_GREEN_TIME_HORIZONTAL
-	MIN_GREEN_TIME_HORIZONTAL = 10
+	MIN_GREEN_TIME_HORIZONTAL = 20
 
 	global MAX_GREEN_TIME_HORIZONTAL		
-	MAX_GREEN_TIME_HORIZONTAL = 12
+	MAX_GREEN_TIME_HORIZONTAL = 21
 
 	global MIN_GREEN_TIME_VERTICAL		
-	MIN_GREEN_TIME_VERTICAL = 10
+	MIN_GREEN_TIME_VERTICAL = 20
 
 	global MAX_GREEN_TIME_VERTICAL		
-	MAX_GREEN_TIME_VERTICAL = 12
+	MAX_GREEN_TIME_VERTICAL = 21
 
 	global TOTAL_TIME
 	TOTAL_TIME = 900
@@ -214,13 +214,17 @@ def initModelClasses():
 				t +=STEP_TIME
 				#pdb.set_trace()	
 				#print("Sampling:",counter)
-			print("Simulation:",counterSimulations)
+			#print("Simulation:",counterSimulations)
 			counterSimulations +=1
+			#if(counterSimulations%10==0):
+				#print(counterSimulations)
+
+
 		
 	if (isPlotting):
 		plot(zps, h15s, h35s, weight54s, weight52s)
-		#np.savetxt("zpS.csv", zps,delimiter = ',')
-		np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
+		np.savetxt("zpS.csv", zps,delimiter = ',')
+		#np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
 
 
 
@@ -241,22 +245,22 @@ def updateCycle(z0,timeS,Segments, alphas, aks, counter,
 
 	#Copy of z values
 	zd = z0.copy()
-	
+	pdb.set_trace()
 	#Function to get alpha and ak values
 	updateAlphaAk(Segments,alphas,aks,counter, zd)
-
+	pdb.set_trace()
 	#Getting data from stateMachine
 	div = int(timeS/(green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME))
 	timeSM = timeS-    (div * (green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME))
 	currentState, time, weight52, weight54, h15, h35 = stateMachine(timeSM,currentState, green_time_horizontal, green_time_vertical, timeS)
 	numberOfIterations = int(timeS/SUB_STEP_TIME)
-	
+	pdb.set_trace()
 	#Updating G values
 	updateG(G,h15,h35,weight52,weight54)
-
+	pdb.set_trace()
 	zd_temp = zd.copy()
 	updateInputOutput(Segments,G, zd, timeS, zd_temp)
-
+	pdb.set_trace()
 	return zd
 	
 def updateInputOutput(Segments,G, zd, time, zd_temp):
@@ -275,10 +279,11 @@ def updateInputOutput(Segments,G, zd, time, zd_temp):
 				y_output += Segment.alpha*SegmentOutput.ak*zd_temp[Segment.numberOfSegment-1]*G[Segment.numberOfSegment-1,SegmentOutput.numberOfSegment-1]
 				if(math.isnan(y_output)):
 					print("Not a number")
-
+		pdb.set_trace()
 		difference = u_input-y_output
 		Segment.currentCars = difference 
 		zd[Segment.numberOfSegment-1] = Segment.currentCars
+		pdb.set_trace()
 	
 
     

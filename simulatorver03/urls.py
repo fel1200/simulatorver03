@@ -27,6 +27,7 @@ from route import CPUArrays
 
 #GPU simulator, integration CPU
 from route import GPU_NI
+from route import GPU_NIRespa7Dic2023
 from route import GPU_testGama
 from route import GPU_integrate
 
@@ -62,6 +63,8 @@ urlpatterns += [
 #GPU
 urlpatterns += [
    #GPU
+    #without integration method respa
+    path('GPU_NIRespa7Dic2023/', GPU_NIRespa7Dic2023.GPU_NIRespa7Dic2023),
     #without integration method
     path('GPU_NI/', GPU_NI.GPU_NI),
     #test of generic 
