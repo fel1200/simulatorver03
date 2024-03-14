@@ -21,14 +21,8 @@
      width:100%;
      height:100vh;
      display:flex;
-     flex-direction:  row;
+     flex-direction: column;
  }
-
-.mainSection{
-    flex: 7;
-    height: 100vh;
-     background-color: var(--brightContrast);
-}
 
 .menu{
     display: flex;
@@ -36,7 +30,75 @@
     width: 100%;
     height: 100px;
     flex-direction: row ;
+    background-color: var(--brightContrast3);
+    filter: drop-shadow(1px 1px 4px #555456);
 }
+
+
+.mainSection{
+    flex: 3;
+    display: flex;
+    height: 100vh;
+    flex-direction:row;
+    margin-top: 32px;
+}
+
+.carLanes{
+    position: absolute;
+    align-self: center;
+    top: 300px;
+    left: 280px;
+    width: 70%;
+}
+.leftMainSection{
+    margin-left: 24px;
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    margin-right: 24px;
+
+}
+.leftMainHero{
+    align-self: center;
+}
+
+.leftMainText{
+    color: var(--primary);
+}
+
+.buttonStartSimulating{
+    width: 60%;
+    height: 70px;
+    align-self: center;
+    background-color: var(--secondary1);
+    color: var(--brightContrast3);
+    font-size: 20px;
+
+}
+.rightMainSection{
+    width: 100%;
+
+    display: flex;
+    flex: 4;
+}
+
+.rightMainImage{
+}
+
+.imageTraffic{
+    width: 410px;
+    height: 410px;
+    align-self: center;
+
+}
+
+.simulatorSection{
+    flex: 3;
+    height: 100vh;
+     background-color: var(--brightContrast);
+
+}
+
 
  .logoContainer{
     display: flex;
@@ -47,8 +109,9 @@
  } 
 
  .logo{
-     width:55px;
-     height:55px;
+     width:42px;
+     height:42px;
+   
      justify-self:center;
      margin-left: 24px;
      margin-right: 16px;
@@ -59,6 +122,7 @@
  .titlePage{
     font-size: 20px;
     color: var(--primary);
+    text
  }
 
  .searchContainer{
@@ -145,7 +209,7 @@
     width: 90%;
     height: 290px;
     border-radius: 16px;
-    background-color: var(--brightContrast3);
+/*    background-color: var(--brightContrast3);*/
     flex-direction: row;
 }
 

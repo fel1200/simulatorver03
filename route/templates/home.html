@@ -13,9 +13,8 @@
 </head>
 <body>
     <div class="landing">
-    	<div class="mainSection">
-    		<nav class = "menu">
-	            <div class="logoContainer">
+        <nav class = "menu">
+                <div class="logoContainer">
                     {% load static %}
                     <img src="{% static "route/images/icon.png" %}" alt = "logo" class="logo">
                     <p class="titlePage">Traffic Performance</p>
@@ -42,10 +41,39 @@
                             Tutorials
                         </a>
                     </li>
+                    <li>
+                        <a ref="/" class="">
+                            Sign in
+                        </a>
+                    </li>
                </ul>
 
                 </div>
-    		</nav>
+        </nav>
+        <div class="mainSection">
+            <img src="{% static "route/images/carsLanes.png" %}" alt ="carLanes"
+            class = "carLanes">
+
+            <div class ="leftMainSection">
+                <div class="leftMainHero">
+                    <h1 class="leftMainText"> 
+                        Outsmarting traffic with edge computing. Configure and simulate scenarios in Vehicular Traffic Networks
+                    </h1>
+                </div>
+                <button class="buttonStartSimulating">
+                    Start simulating
+                </button>
+
+            </div>
+            <div class ="rightMainSection">
+                <div class="rightMainImage">
+                    <img src="{% static "route/images/imageTraffic.png" %}" alt ="imageTraffic"
+                    class = "imageTraffic">
+                </div>
+
+            </div>
+        </div>
+    	<div class="simulatorSection">
     		<div class = "parameters">
                 <div class="titleParameters">
                     {% load static %}
@@ -97,6 +125,45 @@
             </div>
 
     	</div>
+                <nav class = "menu">
+                <div class="logoContainer">
+                    {% load static %}
+                    <img src="{% static "route/images/icon.png" %}" alt = "logo" class="logo">
+                    <p class="titlePage">Traffic Performance</p>
+                </div>
+                <div class="searchContainer">
+                    <input placeholder="            Search models..." class="inputSearch"/>
+                    {% load static %}
+                    <img src="{% static "route/images/search.png" %}" alt = "logo" class="searchLogo">
+                </div>
+                <div class= "links">
+                                    <ul>
+                    <li>
+                        <a ref="/" class="firstLink">
+                            Simulator   
+                        </a>
+                    </li>
+                    <li>
+                        <a ref="/" class="">
+                            My models
+                        </a>
+                    </li>
+                    <li>
+                        <a ref="/" class="">
+                            Tutorials
+                        </a>
+                    </li>
+                    <li>
+                        <a ref="/" class="">
+                            Sign in
+                        </a>
+                    </li>
+               </ul>
+
+                </div>
+        </nav>
+
+
 
     </div>
     

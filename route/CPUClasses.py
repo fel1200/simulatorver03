@@ -69,7 +69,7 @@ def initModelClasses():
 	MAX_GREEN_TIME_VERTICAL = 21
 
 	global TOTAL_TIME
-	TOTAL_TIME = 900
+	TOTAL_TIME = 1650
 		
 	#Objects' declaration
 	"""self, name, numberOfSegment, type_of_segment, orientation, initialCars,
@@ -201,7 +201,7 @@ def initModelClasses():
 				weight54, h15, h35, t, green_time_horizontal,
 				green_time_vertical, weight52s, weight54s, 
 				h15s, h35s, G, isPlotting, ZMAX))
-
+				#pdb.set_trace()	
 				#Saving last value in array	to use it in next cycle			
 				z0 = zp[-1]	
 
@@ -235,6 +235,7 @@ def updateCycle(z0,timeS,Segments, alphas, aks, counter,
 					green_time_horizontal, green_time_vertical,
 					weight52s, weight54s, h15s, h35s, G, isPlotting, ZMAX):
 	
+	print("updateCycle", timeS)
 	#Checking max values
 	for i in range(0,len(Segments)):
 		if z0[i]>ZMAX[i]:
@@ -245,22 +246,22 @@ def updateCycle(z0,timeS,Segments, alphas, aks, counter,
 
 	#Copy of z values
 	zd = z0.copy()
-	pdb.set_trace()
+	#pdb.set_trace()
 	#Function to get alpha and ak values
 	updateAlphaAk(Segments,alphas,aks,counter, zd)
-	pdb.set_trace()
+	#pdb.set_trace()
 	#Getting data from stateMachine
 	div = int(timeS/(green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME))
 	timeSM = timeS-    (div * (green_time_horizontal+YELLOW_TIME+ALL_RED_TIME+green_time_vertical+YELLOW_TIME+ALL_RED_TIME))
 	currentState, time, weight52, weight54, h15, h35 = stateMachine(timeSM,currentState, green_time_horizontal, green_time_vertical, timeS)
 	numberOfIterations = int(timeS/SUB_STEP_TIME)
-	pdb.set_trace()
+	#pdb.set_trace()
 	#Updating G values
 	updateG(G,h15,h35,weight52,weight54)
-	pdb.set_trace()
+	#pdb.set_trace()
 	zd_temp = zd.copy()
 	updateInputOutput(Segments,G, zd, timeS, zd_temp)
-	pdb.set_trace()
+	#pdb.set_trace()
 	return zd
 	
 def updateInputOutput(Segments,G, zd, time, zd_temp):
@@ -279,21 +280,24 @@ def updateInputOutput(Segments,G, zd, time, zd_temp):
 				y_output += Segment.alpha*SegmentOutput.ak*zd_temp[Segment.numberOfSegment-1]*G[Segment.numberOfSegment-1,SegmentOutput.numberOfSegment-1]
 				if(math.isnan(y_output)):
 					print("Not a number")
-		pdb.set_trace()
+		#pdb.set_trace()
 		difference = u_input-y_output
 		Segment.currentCars = difference 
 		zd[Segment.numberOfSegment-1] = Segment.currentCars
-		pdb.set_trace()
+		#pdb.set_trace()
+	#pdb.set_trace()
 	
 
     
 def updateAlphaAk(Segments,alphas,aks,counter,zd):
 	for key in Segments:
 		Segment = Segments[key]
-		Segment.alpha = alpha(Segment,zd)
-		Segment.ak = ak(Segment,zd)
+		Segment.alpha = round(alpha(Segment,zd),4)
+		Segment.ak = round(ak(Segment,zd),4)
 		alphas[Segment.numberOfSegment-1,counter] = Segment.alpha
 		aks[Segment.numberOfSegment-1,counter] = Segment.ak 
+
+	#pdb.set_trace()
 
 
 def stateMachine(time, currentState, green_time_horizontal, green_time_vertical,timeSimulation):
@@ -356,14 +360,18 @@ def updateG(G,h15,h35,weight52,weight54):
 
 def alpha(segmentS, zd):
 	alpha = 0.00
+	#Aquí me quedé en el debug el 13 de febrero-
+
 	if (zd[segmentS.numberOfSegment-1] < segmentS.rho):
 		alpha = ALPHA_MAX
 	elif ((zd[segmentS.numberOfSegment-1] > segmentS.rho) and 
 		(zd[segmentS.numberOfSegment-1] <= segmentS.limitOfCars)):
-		alpha = ((ALPHA_MAX-ALPHA_MIN)/(segmentS.rho-segmentS.limitOfCars))*(segmentS.currentCars-segmentS.limitOfCars)+ALPHA_MIN
+		alpha = ((ALPHA_MAX-ALPHA_MIN)/(segmentS.rho-segmentS.limitOfCars))*(zd[segmentS.numberOfSegment-1]-segmentS.limitOfCars)+ALPHA_MIN
+		#alpha = ((ALPHA_MAX-ALPHA_MIN)/(segmentS.rho-segmentS.limitOfCars))*(segmentS.currentCars-segmentS.limitOfCars)+ALPHA_MIN
 #		alpha = ((ALPHA_MAX-ALPHA_MIN)/(segmentS.rho-zd[segmentS.numberOfSegment-1]))*(zd[segmentS.numberOfSegment-1]-segmentS.limitOfCars)+ALPHA_MIN
 	elif ((zd[segmentS.numberOfSegment-1]>segmentS.limitOfCars)):
 		alpha = ALPHA_MIN
+	#pdb.set_trace()
 	return alpha
 	
 	

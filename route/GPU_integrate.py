@@ -76,13 +76,13 @@ def initModelIntegrateGPU():
 	MIN_GREEN_TIME_HORIZONTAL = 20
 
 	global MAX_GREEN_TIME_HORIZONTAL		
-	MAX_GREEN_TIME_HORIZONTAL = 150
+	MAX_GREEN_TIME_HORIZONTAL = 21
 
 	global MIN_GREEN_TIME_VERTICAL		
 	MIN_GREEN_TIME_VERTICAL = 20
 
 	global MAX_GREEN_TIME_VERTICAL		
-	MAX_GREEN_TIME_VERTICAL = 150
+	MAX_GREEN_TIME_VERTICAL = 21
 
 	global TOTAL_TIME
 	TOTAL_TIME = 900
@@ -163,6 +163,8 @@ def initModelIntegrateGPU():
 
 
 	#Matrix definition
+
+
 	Matrix2DToFillOutput = np.array([[0, 0, 0, 0, 1, 0, 0, 0, 0],
 				[0, 0, 0, 0, 0, 0, 0, 1, 0],
 				[0, 0, 0, 0, 1, 0, 0, 0, 0],
@@ -344,7 +346,7 @@ def initModelIntegrateGPU():
 		
 
 		
-	#np.savetxt("zz.csv", zz[0,0:80000],delimiter = ',')
+	np.savetxt("zz.csv", zz[0,0:90000],delimiter = ',')
 	if (isPlotting):
 		plot(zz[0,0:90000,])
 

@@ -68,7 +68,7 @@ def initModelArray():
 	MAX_GREEN_TIME_VERTICAL = 21
 
 	global TOTAL_TIME
-	TOTAL_TIME = 900
+	TOTAL_TIME = 1700
 
 	#To plot or not
 	isPlotting = True
@@ -193,7 +193,7 @@ def initModelArray():
 
 	if (isPlotting):
 		plot(zps, h15s, h35s, weight54s, weight52s)
-		#np.savetxt("zps.csv", zps,delimiter = ',')
+		np.savetxt("zps.csv", zps,delimiter = ',')
 		#np.savetxt("zpSimulations.csv", zpSimulations,delimiter = ',')
 
 
@@ -202,7 +202,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 					weight54, h15, h35, t, 
 					green_time_horizontal, green_time_vertical,
 					weight52s, weight54s, h15s, h35s, G, isPlotting, ZMAX, zCars, MAin, MAout):
-	#print("Enter", timeS)
+	print("Enter", timeS)
 #	pdb.set_trace()					
 	for i in range(0,9):
 		if z0[i]>ZMAX[i]:
@@ -213,7 +213,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 	#Saving z0 as the new zd		
 	
 	zd = z0.copy()
-
+	#pdb.set_trace()		
 	#Update alpha and ak in each value
 	updateAlphaAk(alpha, ak, alphas,aks,counter, zd, zCars, isPlotting)
 	#pdb.set_trace()		
@@ -231,7 +231,7 @@ def updateCycle(z0,timeS, alpha, ak, alphas, aks, counter,
 	#To update after a complete cycle and don't mix data
 	zd_temp = zd.copy()
 	zd=updateInputOutput(G, zd, timeS, zd_temp, Malpha, Mak, MAin, MAout)
-#	pdb.set_trace()		
+	#pdb.set_trace()		
 	return zd
 
 def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):
@@ -258,8 +258,8 @@ def updateInputOutput(G, zd, time, zd_temp, Malpha, Mak, MAin, MAout):
 	
 def updateAlphaAk(alpha, ak, alphas,aks,counter,zd, zCars, isPlotting):
 	for i in range(0,9):
-		alpha[i] = getAlpha(i,zd, zCars)
-		ak[i] = getAk(i,zd)
+		alpha[i] = round(getAlpha(i,zd, zCars),4)
+		ak[i] = round(getAk(i,zd),4)
 		if isPlotting:
 			alphas[i,counter] = alpha[i]
 			aks[i,counter] = ak[i]
@@ -273,9 +273,12 @@ def getAlpha(i, zd, zCars):
 		alpha = ALPHA_MAX
 	elif ((zd[i] > RHOA[i]) and 
 		(zd[i] <= ZMAX[i])):
-		alpha = ((ALPHA_MAX-ALPHA_MIN)/(RHOA[i]-ZMAX[i]))*(zCars[i]-ZMAX[i])+ALPHA_MIN
+		alpha = ((ALPHA_MAX-ALPHA_MIN)/(RHOA[i]-ZMAX[i]))*(zd[i]-ZMAX[i])+ALPHA_MIN
+#		alpha = ((ALPHA_MAX-ALPHA_MIN)/(RHOA[i]-ZMAX[i]))                  *(zCars[i]-ZMAX[i])+ALPHA_MIN
+#		alpha = ((ALPHA_MAX-ALPHA_MIN)/(segmentS.rho-segmentS.limitOfCars))*(segmentS.currentCars-segmentS.limitOfCars)+ALPHA_MIN
 	elif ((zd[i]>ZMAX[i])):
 		alpha = ALPHA_MIN
+	#pdb.set_trace()
 	return alpha
 
 def getAk(i, zd):
