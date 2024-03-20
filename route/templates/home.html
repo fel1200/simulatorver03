@@ -73,31 +73,67 @@
 
             </div>
         </div>
-    	<div class="simulatorSection">
-    		<div class = "parameters">
-                <div class="titleParameters">
+                <div class="simulatorSection">
+            <div class = "parameters">
+                <h2 class="titleTextSimulator"> Simulator </h2>
+                <div class="subtitleParameters">
                     {% load static %}
                     <img src="{% static "route/images/parameters.png" %}" alt = "logo" class="logoParameters">
                     <p class="parametersText">Parameters</p>
                 </div>
                 <div class="cardParameters">
-                    <div class="firstElementParameters">
+                    <div class="streetSelectionParameters">
                        <p class="firstElementText">Street selection</p>      
                         {% load static %}
                         <img src="{% static "route/images/cruceroOpenStreetMap.png" %}" alt ="Crucero" class="imageCrucero"/>
                     </div>
-                    <div class="secondElementParameters">
+                    <div class="lineSplitter">
+                    </div>
+                    <div class="trafficLightsParameters">
                        <p class="firstElementText">Values</p>      
-                       <input placeholder="Value 1 TL 1" class="inputTL"/>
-                       <input placeholder="Value 2 TL 1" class="inputTL"/>
-                       <input placeholder="Value 1 TL 2" class="inputTL"/>
-                       <input placeholder="Value 2 TL 2" class="inputTL"/>
+                    <label for="trafficLightValue">Time initial Traffic Light 1</label>
+                        <select name="traficlight-names" id="traficlight-names">
+                            <option value="10s">10 seconds</option>
+                            <option value="15s">15 seconds</option>
+                            <option value="20s">20 seconds</option>
 
+                        </select>
+
+                    <label for="trafficLightValue">Time end in Traffic Light 1</label>
+                        <select name="traficlight-names" id="traficlight-names">
+                            <option value="10s">30 seconds</option>
+                            <option value="15s">40 seconds</option>
+                            <option value="20s">50 seconds</option>
+
+                        </select>
+
+                    <label for="trafficLightValue">Time initial Traffic Light 2</label>
+                        <select name="traficlight-names" id="traficlight-names">
+                            <option value="10s">10 seconds</option>
+                            <option value="15s">15 seconds</option>
+                            <option value="20s">20 seconds</option>
+
+                        </select>
+
+                    <label for="trafficLightValue">Time end in Traffic Light 2</label>
+                        <select name="traficlight-names" id="traficlight-names">
+                            <option value="10s">30 seconds</option>
+                            <option value="15s">40 seconds</option>
+                            <option value="20s">50 seconds</option>
+
+                        </select>
+
+
+                    </div>
+                    <div class="lineSplitter">
+                    </div>
+                    <div class="processingParameters">
+                       <p class="firstElementText">Processing Unit</p>      
                     </div>
 
                 </div>
-    		</div>
-    		<div class = "results">
+            </div>
+            <div class = "results">
                 <div class="titleResults">
                     {% load static %}
                     <img src="{% static "route/images/results.png" %}" alt = "logo" class="logoResults">
@@ -107,10 +143,10 @@
                     {% load static %}
                     <img src="{% static "route/images/resultsCharts.png" %}" alt ="results"  class="resultsCharts"/>
                 </div>
-    		</div>
+            </div>
 
-    	</div>
-    	<div class="rightSection">
+        </div>
+        <div class="rightSection">
             <div class="rightTopSection">
                        <p class="firstElementText">@lisMoore</p>      
                        <p class="firstElementText">Liss Moore</p>      
@@ -124,8 +160,9 @@
             <div class="rightBottomSection">
             </div>
 
-    	</div>
-                <nav class = "menu">
+        </div>
+
+        <nav class = "menu">
                 <div class="logoContainer">
                     {% load static %}
                     <img src="{% static "route/images/icon.png" %}" alt = "logo" class="logo">
