@@ -18,6 +18,8 @@ from django.urls import path
 
 #Home view
 from route import a_homePage as home
+#Simulator view
+from route import a_simulator as simulator
 ##Route views
 from route import a_generalMap 
 ##CPU classes
@@ -36,6 +38,9 @@ urlpatterns = [
     #GENERAL
     #HOME
     path('', home.home, name ='home'),
+
+    #SIMULATOR
+    path('simulator/', simulator.simulator, name ='simulator'),
     
     #Parse info
     path('parse/', a_generalMap.parse), # Only to get info from nodes and ways in a vehicular network
